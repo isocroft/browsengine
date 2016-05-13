@@ -199,7 +199,7 @@ contentLoaded.apply(null, [window, function(){
 		     ;
 		  break;
 		  
-		  case "0.5993": // screendim - 320x534 - Portrait e.g Techno
+		  case "0.5993": // screendim - 320x534 - Portrait e.g Techno, Nokia-XL
 		  case "1.669": // screendim - 534x320 - Landscape
 		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
 			     if(z)
