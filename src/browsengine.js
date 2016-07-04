@@ -1,14 +1,34 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @author: https://twitter.com/isocroft
+ * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
+ * @updated: 04/07/2016
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
  
  
-!function(){
+!function(hasInterface, undefined){
+
+ 
+function to_string(obj){
+  return ({}).toString.call(obj).toLowerCase();
+} 
+
+function actual_non_emulated_IE_major_version() {
+    // Detects the actual version of IE in use, even if it's in an older-IE emulation mode.
+    // IE JavaScript conditional compilation docs: https://msdn.microsoft.com/library/121hztk3%28v=vs.94%29.aspx
+	
+    // @cc_on docs: https://msdn.microsoft.com/library/8ka90k2e%28v=vs.94%29.aspx
+    var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')(); // jshint ignore:line
+    if (jscriptVersion === undefined) {
+       return 11; // IE11+ not in emulation mode
+    }
+    
+    return jscriptVersion // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
+}
+
 /*!
  * contentloaded.js
  *
@@ -23,10 +43,6 @@
  * http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
  *
  */
- 
-function to_string(obj){
-  return ({}).toString.call(obj).toLowerCase();
-} 
 
 // @win window reference
 // @fn function reference
@@ -100,7 +116,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	screenfactor = ((w.screen.width/w.screen.height).toPrecision(4)),
 	
-    dpi = w.screen.colorDepth; // always '32' ... sometimes '24'
+    dpi = w.screen.colorDepth; // mostly '32' ... sometimes '24'
 	
 	OS = { //detecting OS data...
 	  isLinux:function(){ 
@@ -391,21 +407,36 @@ contentLoaded.apply(null, [window, function(){
     if (isTrident) { 
 		
         var ieVersion = (function(reg){
+		       // O-o shine ya eye... this version number might be due to emulation !!!
 	           return parseInt(ua.match(reg)[2]);
 	    })(/MSIE\s(([0-9]+)[\.0-9]*)/), 
 		
-		ieTag = " IE"+ieVersion;
-
+		// Here we need to verify that this IE version is not emulated
+		
+		ieActual = actual_non_emulated_IE_major_version(),
+		
+		ieTag = (ieVersion===ieActual ? " IE"+ieVersion : ieActual);
+		
+		// check if the actual IE version is a valid number
+		if(typeof ieTag != "number"){ 
+		    ieTag = " UA-unknown";
+			return;
+		}else{
+		    ieActual = parseInt(ieTag);
+		    ieTag = " IE"+ieActual;
+		}
+		
 	    // Here we are just inserting a marker for IE10+ 
 
-        body.className += (ieVersion >= 10)? " yes-ms" : " yes-old-ms";
+        body.className += (ieActual >= 10)? " yes-ms" : " yes-old-ms"; // @TODO: need to fix possible bug here...
 
 
       	// Here we are detecting Internet Explorer 7 - 10+...
          
-        if(d[dd] && d[dd] === ieVersion  && ("msInterpolationMode" in body.style || 'msLinearGradient' in body.style)){ // IE(7-10)+
-		     if(body.className.indexOf(ieTag.substring(1)) == -1)                   
+        if(d[dd] && d[dd] === ieActual  && ("msInterpolationMode" in body.style || 'msLinearGradient' in body.style)){ // IE(7-10)+
+		     if(body.className.indexOf(ieTag.substring(1)) == -1){                   
                      body.className += ieTag + " forward-ie"; 
+			 }		 
 		}else{
 		
 		     // Here we are detecting Internet Explorer 4 - 6 only...          
@@ -476,4 +507,4 @@ contentLoaded.apply(null, [window, function(){
 
  }, {}]);
  
- }();
+ }(('HTMLDocument' in this) || ('Document' in this));
