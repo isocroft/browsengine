@@ -428,7 +428,7 @@ contentLoaded.apply(null, [window, function(){
 		
 	    // Here we are just inserting a marker for IE10+ 
 
-        body.className += (ieActual >= 10)? " yes-ms" : " yes-old-ms"; // @TODO: need to fix possible bug here...
+        body.className += (ieActual >= 10)? " yes-ms" : " yes-old-ms"; // @TODO: need to fix possible bug here... maybe this line should go altogether (still thinking)
 
 
       	// Here we are detecting Internet Explorer 7 - 10+...
@@ -446,14 +446,15 @@ contentLoaded.apply(null, [window, function(){
 		// detecting Microsoft Edge
         if(browserName == "edge" && ('msTextSizeAdjust' in body.style)){
 		    body.className += " microsoftedge";
-		}		
-	
+		}else{		
+	        body.className += " trident";
+		}   
 	}
 
 	
     else if (isGecko) {
       
-	    // Here we are detecting Firefox from version 3.0+
+	    // Here we are detecting Firefox/IceWeasel from version 3.0+
 			
 	    if(nk.search(/firefox|iceweasel/) > -1){
            if (body.className.indexOf("yes-moz") == -1)
