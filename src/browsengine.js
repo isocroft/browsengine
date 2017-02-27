@@ -26,7 +26,7 @@ function actual_non_emulated_IE_major_version() {
     // IE JavaScript conditional compilation docs: https://msdn.microsoft.com/library/121hztk3%28v=vs.94%29.aspx
 	
     // @cc_on docs: https://msdn.microsoft.com/library/8ka90k2e%28v=vs.94%29.aspx
-    
+
     var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')(); // jshint ignore:line
     if (jscriptVersion === undefined) {
        return 11; // IE11+ not in emulation mode
@@ -155,7 +155,7 @@ contentLoaded.apply(null, [window, function(){
 
      /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
 
-     isPresto = (/Presto/g.test(ua) && (typeof(d.evaluate) == "function" && !is_own_prop(d, 'evaluate')) && (('OLink' in body.style) || (to_string(w.opera) == "[object opera]") || OS.isOperaMobile(body)) && w.history.navigationMode),
+     isPresto = (/Presto/g.test(ua) && ('defaultStatus' in w) && (('OLink' in body.style) || (to_string(w.opera) == "[object opera]") || OS.isOperaMobile(body)) && w.history.navigationMode),
 
      /* Trident is the rendering engine used by older versions of IE */
 
@@ -163,7 +163,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
 
-     isEdgeHTML = ('edgePortal' in w) && _engineFragment && !is_own_prop(d, 'security') && (w.chrome.runtime === undefined) && !isTrident,
+     isEdgeHTML = ('crypto' in w) && _engineFragment && /Edge/g.test(ua) && !is_own_prop(d, 'security') && (w.chrome.runtime === undefined) && !isTrident,
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
@@ -193,7 +193,7 @@ contentLoaded.apply(null, [window, function(){
 	 
 	if(isTrident || isGecko){
 	    
-		 pixelDensity = parseInt(w.screen.availWidth / (winWidth));
+		 pixelDensity = parseInt(w.screen.availWidth / winWidth);
 		
 	}else{
 	  
@@ -758,7 +758,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Here we are detecting Opera from version 15.0+ */
 
-    else if(/Blink/g.test(ua) || isBlink && !isPresto && browserName == 'opr'){
+    else if((/Blink/g.test(ua) || isBlink && !isPresto && browserName == 'opr'){
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
