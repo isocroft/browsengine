@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+  <html lang="en">
+     <head>
+	      <meta charest="utf-8">
+		  <title>Browsengine - Example</title>
+		  
+		  <script type="text/javascript" src="../dist/browsengine.min.js"></script>
+	 </head>
+	 <body id="webpage"> 
+
+	      <script type="text/javascript">
+		        document.body.innerHTML += "\r\n\n " + document.body.className + "\r\n\n ";
+		    </script>
+
+        <script type="text/javascript">
+            if(window.webpage.engine.webkit){
+                alert("webkit rendering engine");
+            }else if(window.webpage.engine.blink){
+                alert("blink rendering engine");
+            }else if(window.webpage.engine.presto){
+                alert("presto rendering engine");
+            }else if(window.webpage.engine.edgehtml){
+                alert("edgehtml rendering engine");
+            }else if(window.webpage.engine.trident){
+                alert("trident redering engine");
+            }else if(window.webpage.engine.gecko){
+                alert("gecko rendering engine");
+            }
+
+            if(window.webpage.old.ie){
+                // the console object is never available when dev tools is not open
+                if(!console){
+                    console = {
+                        hlog:function(msg){
+                            document.body.innerHTML += msg + "\r\n\n\n";
+                        }
+                    }
+                }else{
+		    console.hlog = function(msg){
+                            document.body.innerHTML += msg + "\r\n\n\n";
+                    }	
+		}
+            }
+
+            console.hlog(window.webpage.device.os);
+            console.hlog(window.webpage.device.screen.type);
+            console.hlog(window.webpage.device.screen.dpi);
+            console.hlog(window.webpage.device.type);
+        </script>
+	 </body>
+  </html>
