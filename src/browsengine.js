@@ -758,11 +758,11 @@ contentLoaded.apply(null, [window, function(){
 
     /* Here we are detecting Opera from version 15.0+ */
 
-    else if((/Blink/g.test(ua) || isBlink && !isPresto && browserName == 'opr'){
+    else if(/Blink/g.test(ua) || isBlink && !isPresto && browserName == 'opr'){
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
-                    body.className +=" yes-blink opera blink like-gecko like-khtml";
+                    body.className += " yes-blink opera blink like-gecko like-khtml";
 
           }
 
