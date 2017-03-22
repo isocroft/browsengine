@@ -27,9 +27,8 @@
                 alert("gecko rendering engine");
             }
 
-            if(window.webpage.old.ie){
                 // the console object is never available when dev tools is not open
-                if(!console){
+                if(!window.console && window.webpage.old.ie){
                     console = {
                         hlog:function(msg){
                             document.body.innerHTML += msg + "\r\n\n\n";
@@ -40,7 +39,6 @@
                             document.body.innerHTML += msg + "\r\n\n\n";
                     }	
 		}
-            }
 
             console.hlog(window.webpage.device.os);
             console.hlog(window.webpage.device.screen.type);
