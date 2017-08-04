@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.3
+ * @version: 0.0.3-beta.3
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 11/03/2017
+ * @updated: 22/07/2017
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
@@ -366,7 +366,7 @@ contentLoaded.apply(null, [window, function(){
 		  
 		  case "1.778": // screendim - 1920×1080
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
-		       body.className += " 1920×1080";
+		       body.className += " 1920x1080";
 		       
 		       if(Device.onDesktop())
 			   		body.setAttribute("aria-view-mode","desktop tv");
@@ -375,9 +375,9 @@ contentLoaded.apply(null, [window, function(){
 		  
 		  case "1.600": // Resolution - 1680×1050, Resolution  - 1440x900, Resolution - 1280×800
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
-		        if(w.screen.width > 1440 && w.screen.width <= 1680) body.className += " 1680×1050"; 
-		        if(w.screen.width > 1280 && w.screen.width <= 1440) body.className += " 1440×900";
-			    if(w.screen.width <= 1280) body.className += " 1280×800";
+		        if(w.screen.width > 1440 && w.screen.width <= 1680) body.className += " 1680x1050"; 
+		        if(w.screen.width > 1280 && w.screen.width <= 1440) body.className += " 1440x900";
+			    if(w.screen.width <= 1280) body.className += " 1280x800";
 				
 				if(Device.onTablet())
 					body.setAttribute("aria-view-mode", "tablet");
@@ -389,7 +389,7 @@ contentLoaded.apply(null, [window, function(){
 		  
 		  case "1.805": // Resolution - 1386×768
 		      if((OS.isWinPC() || OS.isMac() || OS.isLinux()) && w.screen.width >= 768){
-		         body.className += " 1386×768";
+		         body.className += " 1386x768";
 
 		         if(Device.onDesktop())
 			     	body.setAttribute("aria-view-mode","desktop");
@@ -443,7 +443,7 @@ contentLoaded.apply(null, [window, function(){
 		browserVersion = parseFloat(browserVersion);
 	
 	
-	    if(browserVersion  <= 7.0 && browserName == "msie" && isTrident){
+	    if(browserVersion  <= 8.0 && browserName == "msie" && isTrident){
 	     
 	     	/* 
 	     		There are several browsers using the [Trident] engine,
@@ -455,16 +455,17 @@ contentLoaded.apply(null, [window, function(){
      		 w.webpage.old.ie = true;
 	    }
 		
-		if(browserVersion <= 9.0 && browserName == "opera" && isPresto){
+		if(browserVersion <= 10.0 && browserName == "opera" && isPresto){
 
 			/* There is only one browser using the [Presto] engine */
+			/* Though Opera now uses the [Blink] engine as from 15.0+ */
 		 
 		    body.className += " oldOpera";
 
 		    w.webpage.old.opera = true;
 		}
 			
-		if(browserVersion <= 3.5 && browserName == "mozilla" && isGecko){
+		if(browserVersion <= 4.0 && browserName == "mozilla" && isGecko){
 
 			/* 
 				There are sevral browsers using the Mozillas' Gecko engine 
@@ -480,7 +481,7 @@ contentLoaded.apply(null, [window, function(){
 
 		    if(ua.match(/flock/i)){
 
-		    	/* From version 4, Flock uses the Webkit engine */
+		    	/* From versions 1 - 3, Flock uses the Gecko engine */
 
 		    	body.className += " oldFlock";
 
@@ -488,7 +489,7 @@ contentLoaded.apply(null, [window, function(){
 		    }
 		}	
 			
-		if(browserVersion <= 2.0 && browserName == "webkit" && !isBlink){
+		if(browserVersion <= 12.0 && browserName == "webkit" && !isBlink){
 		     		   
 		    body.className += (isChrWebkit)? " oldChrome" : (isSafWebkit? " oldSafari": "");
 
@@ -499,6 +500,15 @@ contentLoaded.apply(null, [window, function(){
 		    }else if(isChrWebkit){
 
 		    	w.webpage.old.chrome = true;
+		    }
+
+		    if(ua.match(/flock/i) && browserVersion >= 4){
+
+		    	/* From version 4, Flock uses the Webkit engine */
+
+		    	body.className += " oldFlock";
+
+		    	w.webpage.old.flock = true;
 		    }
 		}	
 	
@@ -632,7 +642,7 @@ contentLoaded.apply(null, [window, function(){
 	
     else if (isGecko) {
       
-	    // Here we are detecting Firefox/IceWeasel from version 3.0+
+	    // Here we are detecting Firefox, IceWeasel & SeaMonkey from version 3.0+
 			
 	    if(nk.search(/firefox|iceweasel/) > -1){
 
@@ -666,7 +676,7 @@ contentLoaded.apply(null, [window, function(){
         	 @TODO: There are other [Gecko] browsers that exist - 
         
         	Epiphany (formerly used [Webkit, Presto]), Waterfox, 
-        	K-Meleon, Classilla, Lunascape(dual-engine Gecko + Trident), UC Browser, 
+        	K-Meleon, Classilla, Lunascape(dual-engine Gecko + Trident), 
         	SeaMonkey, Flock (1.0 - 3.0), WebSpirit, Pale Moon e.t.c.	
         */		
 
@@ -687,10 +697,9 @@ contentLoaded.apply(null, [window, function(){
 
     }
 
-      /* Here we are detecting Chrome from version 2.0+ */
+      /* Here we are detecting Chrome, UC Browser from version 2.0+ and 5.0+ respectively */
 
      else if ((typeof(window["URL"] || window["webkitURL"]) == 'function') || isChrWebkit) {
-
 
           if(isBlink){
 
@@ -706,17 +715,38 @@ contentLoaded.apply(null, [window, function(){
 
           }else{
 
-          		if (body.className.indexOf("yes-webkit") == -1){
 
-                       body.className += " yes-webkit chrome";
+  				/* Webkit Engine - browsers */
 
-          		}
+               if (body.className.indexOf("yes-webkit") == -1){
+
+               			/* detecting UC Browser for desktop ... */
+
+			     	  if(ua.match(/ubrowser\/(?:[\d]{1,}\.[\d]{1,})/)){
+
+
+			                body.className += " yes-webkit ucbrowser";
+
+
+			     	  }
+
+			     	  /* Other Browser(s) desktop */
+
+			     	  else {
+
+
+               				body.className += " yes-webkit chrome";
+
+			     	  }
+			    }
+
+          		
 
           		body.className += " webkit like-gecko like-khtml";
 
 				w.webpage.engine.webkit = true; 
-          }
-               
+          
+            }
 
     }
 	
