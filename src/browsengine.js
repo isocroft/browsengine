@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.3-beta.3
+ * @version: 0.0.3-beta.5
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 22/07/2017
+ * @updated: 12/09/2017
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
@@ -29,7 +29,7 @@ function actual_non_emulated_IE_major_version() {
 
     var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')(); // jshint ignore:line
     if (jscriptVersion === undefined) {
-       return 11; // IE11+ not in emulation mode
+       jscriptVersion = 11; // IE11+ not in emulation mode
     }
     
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
@@ -93,7 +93,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	_engineFragment = ((w.chrome || d.readyState) && 'clientInformation' in w && 'all' in d), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
-	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /(opera|opr)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
+	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
 	OS = { //detecting OS data...
 	  	isLinux:function(){ 
@@ -122,7 +122,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isOperaMobile:function(bd){
 		
-		    return  to_string(window.operamini) == '[object operamini]' && ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style)));
+		    return  to_string(window.operamini) == '[object operamini]' || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamini")));
 			
 		},
 		isIOS:function(bd){ 
@@ -151,11 +151,11 @@ contentLoaded.apply(null, [window, function(){
 
 	 /* Gecko has so many browsers using it... like, e plenty wellu wellu !! so we have to be kia-ful when detectig... */	
 	 
-     isGecko = (!n.vendor && (w.crypto && typeof(w.mozInnerScreenX) == 'number') && (!d.getBoxObjectFor || n.battery || w.mozContact) && /Gecko/g.test(ua)), 
+     isGecko = (!n.vendor && (w.crypto && typeof(w.mozInnerScreenX) == 'number') && (!(d.getBoxObjectFor) || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
 
      /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
 
-     isPresto = (/Presto/g.test(ua) && ('defaultStatus' in w) && (('OLink' in body.style) || (to_string(w.opera) == "[object opera]") || OS.isOperaMobile(body)) && w.history.navigationMode),
+     isPresto = (/Presto/g.test(ua) && ('defaultStatus' in w) && (('OLink' in body.style) || ('oMatchesSelector' in body) || (to_string(w.opera) == "[object opera]") || OS.isOperaMobile(body)) && 'navigationMode' in w.history),
 
      /* Trident is the rendering engine used by older versions of IE */
 
@@ -167,7 +167,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('CSS' in w);/* && ('webkitStorageInfo' in w); */	
+     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('CSS' in w) /* && ('webSessionType' in w); */	
 	
 	/* setup info object - {webpage} */
 
@@ -204,24 +204,34 @@ contentLoaded.apply(null, [window, function(){
 	Device = {
 		isTouchCapable:function(){
 
-			return (('ontouchstart' in w) && !is_own_prop(w, 'ontouchstart')) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
+			return (('ontouchstart' in w) && !(is_own_prop(w, 'ontouchstart'))) || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
 		},
 		onDesktop:function(){
 
-			return ((~~pixelDensity) == 1) && !(this.isTouchCapable()) && !(this.onTablet());
+			return (((~~pixelDensity) == 1) && (w.screen.width >= 1024 && w.screen.width < 1920) && !(this.onTablet(true)));
 		},
-		onTablet:function(){
+		onTV:function(){
 
 			if(!this.isTouchCapable()) return false;
+
+			return ((~~pixelDensity) == 1.5) && (w.screen.width >= 1920);
+		},
+		onTablet:function(canBeCapable){
+
+			if(!canBeCapable){
+				if(!this.isTouchCapable()){
+					return false;
+				} 
+			}
 		
 		    return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onMobile();
 			
 		},
 	    onMobile:function(){
 
-	    	if(!this.isTouchCapable()) return false;
+	    	if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
 
-	    	/* https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
+	    	/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
 		
 		    return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width < 768) && (w.screen.width / pixelDensity) < 768);
 		
@@ -401,7 +411,9 @@ contentLoaded.apply(null, [window, function(){
 		  break;
     };
 	
-	body.setAttribute("aria-last-modified", document.lastModified);
+	body.setAttribute("aria-last-detected", document.lastModified);
+
+	body.setAttribute("aria-touch-capable", String(Device.isTouchCapable()));
 
     if(Screen.isRetina()){
 
