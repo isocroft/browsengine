@@ -4,7 +4,7 @@ This is a small library for detecting different browser engines, their versions 
 
 ## Preamble
 
-The JavaScript community has and will always deal with _browser quirks_ (mostly for CSS and JavaScript). These are the many anomalies that continue and will continue give rise to cross-browser issues (not because the specs from IEEE or W3C don't spell things out well). It's always going to be with us for a long time to come. Why ? because software (like browsers) is built by humans for humans and humans make mistakes and wrong judgement. Some quirks are usually atrributed to one browser at a given version (or a range of versions). Others are attributed to more than one. _Browser Sniffing_ using the **User-Agent** string (`navigator.userAgent`) used to be the way to go in the past to shim or workaround these anomalies. Browser sniffing had issues because the Javascript logic that was written for one version of a given browser could fail when a new version of that same browser was released. In recent times, we now have **Feature Detection** which is more (infact 95%) reliable than **Browser Sniffing**. That's why Javascript libraries like the famous [https://github.com/Modernizr/Modernizr](**Modernizr**) is used heavily on websites and web applications today.
+The JavaScript community has and will always deal with _browser quirks_ (mostly for CSS and JavaScript). These are the many anomalies that continue and will continue give rise to cross-browser issues (not because the specs from IEEE or W3C don't spell things out well). It's always going to be with us for a long time to come. Why ? because software (like browsers) is built by humans for humans and humans make mistakes and wrong judgement. Some quirks are usually atrributed to one browser at a given version (or a range of versions). Others are attributed to more than one. _Browser Sniffing_ using the **User-Agent** string (`navigator.userAgent`) used to be the way to go in the past to shim or workaround these anomalies. Browser sniffing had issues because the Javascript logic that was written for one version of a given browser could fail when a new version of that same browser was released. In recent times, we now have **Feature Detection** which is more (infact 95%) reliable than **Browser Sniffing**. That's why Javascript libraries like the famous [**Modernizr**](https://github.com/Modernizr/Modernizr) is used heavily on websites and web applications today.
 
 ## The Problem
 
@@ -12,7 +12,7 @@ The JavaScript community has and will always deal with _browser quirks_ (mostly 
 
 ## The Solution
 
-This is where a new concept comes in. I call it **Engine Detection**. It's a concept that plays nice with **Feature detection** too. It compliments **Feature detection** whenever there are false positive reports by a browser (i.e. the browser says it supports something but there are bugs/quirks in the way it supports it). For example, Firefox supports `navigator.onLine`. So, feature detection will report a positive (albeit a false one in versions 4 to 41) for this feature. However, Firefox has [https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine](a well known quirk) with its support. In this case (with Firefox), we need a combination of _Feature_ and _Engine_ detection which will help in [https://codepen.io/isocroft/pen/OxLeBw](shimming) this quirk/weird behavior. When it comes to **Engine Detection**, we deal with the version number of the rendering engine (mostly) and not the version of the browser. Why ? Because, it makes more sense as the engine reveals itself even more in what it supports and doesn't support. For instance, Firefox (version 42) uses **Gecko version 6.42**. Similarly, old Opera (version 11.62) uses **Presto version 2.10.229**.
+This is where a new concept comes in. I call it **Engine Detection**. It's a concept that plays nice with **Feature detection** too. It compliments **Feature detection** whenever there are false positive reports by a browser (i.e. the browser says it supports something but there are bugs/quirks in the way it supports it). For example, Firefox supports `navigator.onLine`. So, feature detection will report a positive (albeit a false one in versions 4 to 41) for this feature. However, Firefox has [a well known quirk](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine) with its support. In this case (with Firefox), we need a combination of _Feature_ and _Engine_ detection which will help in [shimming](https://codepen.io/isocroft/pen/OxLeBw) this quirk/weird behavior. When it comes to **Engine Detection**, we deal with the version number of the rendering engine (mostly) and not the version of the browser. Why ? Because, it makes more sense as the engine reveals itself even more in what it supports and doesn't support. For instance, Firefox (version 42) uses **Gecko version 6.42**. Similarly, old Opera (version 11.62) uses **Presto version 2.10.229**.
 
 ## Usage
  
@@ -151,6 +151,7 @@ body[class*='standards IE7'] [class*='column-']{
 }
 
 /* when browser is in quirks mode, we make the body 70% transparent and disable all controls */
+
 .quirks {
 	opacity:0.7;
 	filter:alpha(opacity=70);
@@ -180,7 +181,8 @@ html .gecko .banner {
    background-image:url('./assets/img/vectors/flakes.svg');
 }
 
-/* ignore the newer blink engine for Opera. only apply gradient to presto engine for Opera */
+/* ignore the newer blink engine for Opera. only apply gradient to presto engine for Desktop Opera */
+
 .cssgradient .presto.yes-opera .banner{
 	background-image:-o-linear-gradient(top, #F5F5F5, #E4E4E4);
 }
