@@ -127,7 +127,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isIOS:function(bd){ 
 		
-		    return (ua.indexOf("iPhone; U;") > 0) || (ua.indexOf("iPad; U;") > 0) || (ua.indexOf("iPod; U;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
+		    return (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
 	    isAndriod:function(bd){
@@ -374,7 +374,7 @@ contentLoaded.apply(null, [window, function(){
 			}   
           break;
 		  
-		  case "1.778": // screendim - 1920×1080
+		  case "1.778": // screendim - 1920ï¿½1080
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
 		       body.className += " 1920x1080";
 		       
@@ -383,7 +383,7 @@ contentLoaded.apply(null, [window, function(){
 			}   
 		  break;
 		  
-		  case "1.600": // Resolution - 1680×1050, Resolution  - 1440x900, Resolution - 1280×800
+		  case "1.600": // Resolution - 1680ï¿½1050, Resolution  - 1440x900, Resolution - 1280ï¿½800
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
 		        if(w.screen.width > 1440 && w.screen.width <= 1680) body.className += " 1680x1050"; 
 		        if(w.screen.width > 1280 && w.screen.width <= 1440) body.className += " 1440x900";
@@ -397,7 +397,7 @@ contentLoaded.apply(null, [window, function(){
 			 }	
 		  break;
 		  
-		  case "1.805": // Resolution - 1386×768
+		  case "1.805": // Resolution - 1386ï¿½768
 		      if((OS.isWinPC() || OS.isMac() || OS.isLinux()) && w.screen.width >= 768){
 		         body.className += " 1386x768";
 
