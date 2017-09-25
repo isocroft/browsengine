@@ -16,7 +16,7 @@ Here's an excerpt from a book titled **Professional JavaScript for Web Developer
 
 However, Zakas, with all due respect to him as the professional, didn't exaclty do justice to this very important manner of thinking in the code examples and explanations that followed the paragraph where this excerpt was taken. For instance, _Opera_ isn't a rending engine, _Presto_ is.
 
-This shows that this manner of dealing with cross-browser quirks is very helpful amd effective.
+This shows that this manner of dealing with cross-browser quirks is very helpful and effective.
 
 ## The Solution
 
