@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.3-beta.5
+ * @version: 0.0.4
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 12/09/2017
+ * @updated: 25/09/2017
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
@@ -431,6 +431,7 @@ contentLoaded.apply(null, [window, function(){
     	w.webpage.device.screen.type = 'normal';
     } 	
 	
+	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
 
 	          isChrWebkit = ((d.webkitHidden == false || d.webkitHidden === undefined) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && ((n.vendor.indexOf("Google Inc") != -1) || !w.showModalDialog));
@@ -580,7 +581,7 @@ contentLoaded.apply(null, [window, function(){
 		}
 	
 	try{
-		vMode = body.getAttribute('aria-view-mode');
+		vMode = body.getAttribute("aria-view-mode");
 
 		w.webpage.device.type = vMode;
 
