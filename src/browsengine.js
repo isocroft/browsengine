@@ -127,7 +127,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isIOS:function(bd){ 
 		
-		    return (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
+		    return (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
 	    isAndriod:function(bd){
@@ -167,7 +167,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('CSS' in w) /* && ('webSessionType' in w); */	
+     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('CSS' in w);	
 	
 	/* setup info object - {webpage} */
 
@@ -378,8 +378,11 @@ contentLoaded.apply(null, [window, function(){
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
 		       body.className += " 1920x1080";
 		       
-		       if(Device.onDesktop())
-			   		body.setAttribute("aria-view-mode","desktop tv");
+		       	    if(Device.onDesktop())
+			   		body.setAttribute("aria-view-mode","desktop");
+			     
+			    if(Device.onTV())
+			   		body.setAttribute("aria-view-mode","tv");
 			}   
 		  break;
 		  
