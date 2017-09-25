@@ -10,12 +10,12 @@ The JavaScript community has and will always deal with _browser quirks_ (mostly 
 
 **Feature detection** is a great leap forward and a more gratifying and productive shift from the old way of doing things using **Browser sniffing**. But sometimes, feature detection can give false positives for native browser features. More so, there are known issues with specific browser engine types (not necessarily specific to one browser vendor) e.g **Trident** (the rendering engine for IE and Avant) has a problem with `console.log()` calls whenever the dev tools isn't open in the browser. **Presto** (the rendering engine for old Opera up till version 14) on the other hand supports 2 APIs for registerig DOM events (`atttachEvent()` and `addEventListener()`). These issues cannot usually be dealt with in isolation (and it would be silly to do so).
 
-Here's an excerpt from a book called **Professional JavaScript for Web Developers** by Nicholas C. Zakas (Dec 2011)
+Here's an excerpt from a book titled **Professional JavaScript for Web Developers** written by Nicholas C. Zakas (Dec 2011)
 
->Identifing The Rendering Engine
+>
 As mentioned earlier, the exact name and version of the browser isn't as important as the rendering engine being used.If irefox, Camino and Netscape all use the same version of _Gecko_, their capabilities will be the same.
 
-However, Zakas, with all due respect to him as the professional, didn't exaclty do justice to this very important manner of thinking in the code examples and explanations that followed the paragraph where this excerpt was taken. _Opera_ isn't a rending engine, _Presto_ is.
+However, Zakas, with all due respect to him as the professional, didn't exaclty do justice to this very important manner of thinking in the code examples and explanations that followed the paragraph where this excerpt was taken. For instance, _Opera_ isn't a rending engine, _Presto_ is.
 
 ## The Solution
 
