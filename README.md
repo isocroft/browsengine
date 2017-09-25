@@ -12,8 +12,7 @@ The JavaScript community has and will always deal with _browser quirks_ (mostly 
 
 Here's an excerpt from a book titled **Professional JavaScript for Web Developers** written by Nicholas C. Zakas (Dec 2011)
 
->
-As mentioned earlier, the exact name and version of the browser isn't as important as the rendering engine being used.If irefox, Camino and Netscape all use the same version of _Gecko_, their capabilities will be the same.
+>As mentioned earlier, the exact name and version of the browser isn't as important as the rendering engine being used.If irefox, Camino and Netscape all use the same version of _Gecko_, their capabilities will be the same.
 
 However, Zakas, with all due respect to him as the professional, didn't exaclty do justice to this very important manner of thinking in the code examples and explanations that followed the paragraph where this excerpt was taken. For instance, _Opera_ isn't a rending engine, _Presto_ is.
 
@@ -68,10 +67,10 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             /* Browsengine exposes an object {webpage} on the global window object */
 
             console.hlog(document.body.className);
-            console.hlog(window.webpage.device.os);
-            console.hlog(window.webpage.device.screen.type);
+            console.hlog(window.webpage.device.os); // operating system for the device e.g "Windows"
+            console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina or "normal"
             console.hlog(window.webpage.device.screen.dpi);
-            console.hlog(window.webpage.device.type);
+            console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
         </script>
 	 </body>
   </html>
