@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.4
+ * @version: 0.0.5
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 25/09/2017
+ * @updated: 29/11/2017
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
@@ -151,7 +151,7 @@ contentLoaded.apply(null, [window, function(){
 
 	 /* Gecko has so many browsers using it... like, e plenty wellu wellu !! so we have to be kia-ful when detectig... */	
 	 
-     isGecko = (!n.vendor && (w.crypto && typeof(w.mozInnerScreenX) == 'number') && (!(d.getBoxObjectFor) || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
+     isGecko = (!n.vendor && (('crypto' in w) && typeof(w.mozInnerScreenX) == 'number') && (!(d.getBoxObjectFor) || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
 
      /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
 
@@ -163,11 +163,11 @@ contentLoaded.apply(null, [window, function(){
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
 
-     isEdgeHTML = ('crypto' in w) && _engineFragment && /Edge/g.test(ua) && !is_own_prop(d, 'security') && (w.chrome.runtime === undefined) && !isTrident,
+     isEdgeHTML = ('crypto' in w) && _engineFragment && /Edge/g.test(ua) && ('msCredentials' in w) && (w.chrome.runtime === undefined) && !isTrident,
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('CSS' in w);	
+     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('C' in w);	
 	
 	/* setup info object - {webpage} */
 
@@ -724,6 +724,14 @@ contentLoaded.apply(null, [window, function(){
                        body.className += " yes-blink chrome";
 
           		 }
+		  
+		    	/* Detecting Vivaldi Browser for Desktop (Blink Engine) ... */
+		  
+		  	if(ua.match(/vivaldi\/(?:[\d]{1,}\.[\d]{1,})/)){
+				  
+					  body.className += " yes-blink vivaldi";
+				  
+			}
 
           		 body.className += " blink like-gecko like-khtml";
 
@@ -745,6 +753,8 @@ contentLoaded.apply(null, [window, function(){
 
 
 			     	  }
+		       
+		       		  
 
 			     	  /* Other Browser(s) desktop */
 
