@@ -411,7 +411,15 @@ contentLoaded.apply(null, [window, function(){
 		  break;
 		  
 		  default:
+        if(Device.onDesktop())
+          body.setAttribute("aria-view-mode","desktop");
+        else if(Device.onTablet())
+          body.setAttribute("aria-view-mode","tablet");
+        else if(Device.onMobile())
+          body.setAttribute("aria-view-mode","mobile");
+        else
 		     body.setAttribute("aria-view-mode","unknown");
+
 		  break;
     };
 	
