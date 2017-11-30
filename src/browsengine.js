@@ -204,11 +204,11 @@ contentLoaded.apply(null, [window, function(){
 	Device = {
 		isTouchCapable:function(){
 
-			return (('ontouchstart' in w) && !(is_own_prop(w, 'ontouchstart'))) || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
+			return ('ontouchstart' in w)  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
 		},
 		onDesktop:function(){
 
-			return (((~~pixelDensity) == 1) && (w.screen.width >= 1024 && w.screen.width < 1920) && !(this.onTablet(true)));
+			return (((~~pixelDensity) == 1) && (w.screen.width >= 1024 && ( w.screen.width < 1920 || !this.onTV())) && !(this.onTablet(true)));
 		},
 		onTV:function(){
 
@@ -314,6 +314,7 @@ contentLoaded.apply(null, [window, function(){
 		  
           case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
 		  case "0.7500": // screendim - 1200x1600, screendim - 864x1152, screendim - 768x1024, screendim - 600x800, screendim - 360x480, screendim - 480x640 - Portrait e.g Nokia-XL
+		  case "0.7496": // IPad Pro
 		        if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && (w.screen.width >= 768)){
 				   body.className += (screenfactor=="1.333")? (w.screen.width <= 1024? " 1024x768" : " 1152x864") : (w.screen.width <= 768?" 768x1024" : " 864x1152");
 				   
