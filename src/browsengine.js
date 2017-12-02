@@ -24,7 +24,7 @@ function is_own_prop(obj, prop){
 function has_pcredentials_iconurl(){
 	try{
 		var cred = new window.PasswordCredential({name:"-",iconURL:"http://lab.example.com",password:"-",id:"-"});
-		return (cred.iconURL === "http://lab.example.com");
+		return (cred.iconURL === "http://lab.example.com/");
 	}catch(ex){
 		return false;
 	}
@@ -52,6 +52,8 @@ if(window.navigator.oscpu === undefined){
 if (window.navigator.language === undefined) {  // in Opera, the language, browserLanguage and userLanguage properties are equivalent
 	window.navigator.language = window.navigator.browserLanguage || window.navigator.userLanguage;
 }
+	
+
 /*!
  * contentloaded.js
  *
@@ -176,7 +178,7 @@ contentLoaded.apply(null, [window, function(){
 
      /* Trident is the rendering engine used by older versions of IE */
 
-     isTrident = ((/*@cc_on!@*/false || d.selection || d.createEventObject) && /Trident/g.test(ua) && (w.execScript || _engineFragment) && ('behavior' in body.style)),
+     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && (w.execScript || _engineFragment) && ('behavior' in body.style)),
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
 
