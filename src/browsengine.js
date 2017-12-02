@@ -20,6 +20,15 @@ function to_string(obj){
 function is_own_prop(obj, prop){
   return ({}).hasOwnProperty.call(obj, prop);
 } 
+	
+function has_pcredentials_iconurl(){
+	try{
+		var cred = new window.PasswordCredential({name:"-",iconURL:"http://lab.example.com",password:"-",id:"-"});
+		return (cred.iconURL === "http://lab.example.com");
+	}catch(ex){
+		return false;
+	}
+}
 
 function actual_non_emulated_IE_major_version() {
     // Detects the actual version of IE in use, even if it's in an older-IE emulation mode.
@@ -33,6 +42,11 @@ function actual_non_emulated_IE_major_version() {
     }
     
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
+}
+	
+if(!window.navigator.oscpu){
+   var _index = window.navigator.appVersion.indexOf(')') + 1;
+   window.navigator.oscpu = window.navigator.appVersion.substring(0, _index);
 }
 
 /*!
@@ -167,7 +181,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('C' in w);	
+     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('Credential' in w) && (has_pcredentials_iconurl());	
 	
 	/* setup info object - {webpage} */
 
