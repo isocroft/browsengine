@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.5
+ * @version: 0.0.6
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 29/11/2017
+ * @updated: 04/12/2017
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
@@ -44,11 +44,14 @@ function actual_non_emulated_IE_major_version() {
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
 }
 	
-if(!window.navigator.oscpu){
-   var _index = window.navigator.appVersion.indexOf(')') + 1;
-   window.navigator.oscpu = window.navigator.appVersion.substring(0, _index);
+if(window.navigator.oscpu === undefined){
+   	var _index = window.navigator.appVersion.indexOf(')') + 1;
+   	window.navigator.oscpu = window.navigator.appVersion.substring(0, _index);
 }
-
+	
+if (window.navigator.language === undefined) {  // in Opera, the language, browserLanguage and userLanguage properties are equivalent
+	window.navigator.language = window.navigator.browserLanguage || window.navigator.userLanguage;
+}
 /*!
  * contentloaded.js
  *
