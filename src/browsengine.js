@@ -43,16 +43,36 @@ function actual_non_emulated_IE_major_version() {
     
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
 }
-	
-if(window.navigator.oscpu === undefined){
-   	var _index = window.navigator.appVersion.indexOf(')') + 1;
-   	window.navigator.oscpu = window.navigator.appVersion.substring(0, _index);
+
+function polyfill_oscpu_lang(pg, av){
+	if(window.navigator.oscpu === undefined){
+		if(pg.webkit || pg.blink){
+   			var e_index = av.indexOf(')') + 1;
+			var b_index = av.indexOf(' ');
+   			window.navigator.oscpu = av.substring(b_index, e_index);
+		}else if(pg.trident){
+			var splited = av.split(';');
+			window.navigator.oscpu = splited[3];
+		}else if(!pg.gecko){
+			;
+		}
+	}
+		
+	if (window.navigator.language === undefined) {  // in Opera, the language, browserLanguage and userLanguage properties are equivalent
+		window.navigator.language = window.navigator.browserLanguage || window.navigator.userLanguage;
+	}
 }
 	
-if (window.navigator.language === undefined) {  // in Opera, the language, browserLanguage and userLanguage properties are equivalent
-	window.navigator.language = window.navigator.browserLanguage || window.navigator.userLanguage;
+function get_cpu_info(pg, n, ci){
+	var cc = "";
+	if(pg.trident){
+		cc = n.cpuClass;
+	}else if(pg.webkit || pg.blink){
+		cc = ci.cpuClass;
+	}else{
+		;
+	}
 }
-	
 
 /*!
  * contentloaded.js
@@ -106,14 +126,25 @@ function contentLoaded (win, fn, obj) {
 
 contentLoaded.apply(null, [window, function(){ 
 	
-	var w=this, d=w.document, rt = d.documentElement,  dd="documentMode", n= w.navigator, ua = n.userAgent, apn = n.appName, /* global objects... */
+	var w=this, d=w.document, rt = d.documentElement,  dd="documentMode", ci = (w.clientInformation || {}), n= w.navigator, eid = (ci.productSub || n.productSub || (w.opera && w.opera.buildNumber())), ua = (ci.userAgent || n.userAgent), apn = n.appName, apv = (ci.appVersion || n.appVersion), /* global objects... */
 	
 	body, Device, isGecko = false, isEdgeHTML = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isKDE = false, nk = ua.toLowerCase(),
 	
 	_engineFragment = ((w.chrome || d.readyState) && 'clientInformation' in w && 'all' in d), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
-	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
+	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
+	osver_map = {
+		"Windows NT 5.1":"Windows XP",
+		"Windows NT 6.1":"Windows 7",
+		"Windows NT 6.2":"Windows 8",
+		"Windows NT 7.1":"Windows 10"
+	},
+	   
+	cputype_map = {
+	
+	},
+	    
 	OS = { //detecting OS data...
 	  	isLinux:function(){ 
 	
@@ -149,12 +180,12 @@ contentLoaded.apply(null, [window, function(){
 		    return (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
-	    isAndriod:function(bd){
+	    	isAndriod:function(bd){
 		
 		  return (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
 		  
 		},
-	    isBB:function(bd){
+	    	isBB:function(bd){
 		
 		   return (ua.search(/BlackBerry|\bBB\d+/) > -1);
 		   
@@ -168,9 +199,9 @@ contentLoaded.apply(null, [window, function(){
 
 	 body = d.body || d.getElementsByTagName('body')[0],
 
-	 /* Gecko has so many browsers using it... like, e plenty wellu wellu !! so we have to be kia-ful when detectig... */	
+	 /* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
 	 
-     isGecko = (!n.vendor && (('crypto' in w) && typeof(w.mozInnerScreenX) == 'number') && (!(d.getBoxObjectFor) || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
+     isGecko = (!n.vendor && ((!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (!(d.getBoxObjectFor) || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
 
      /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
 
@@ -186,7 +217,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ('crypto' in w) && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('Credential' in w) && (has_pcredentials_iconurl());	
+     isBlink = _engineFragment && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('Credential' in w) && (has_pcredentials_iconurl());	
 	
 	/* setup info object - {webpage} */
 
