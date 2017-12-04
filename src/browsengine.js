@@ -54,7 +54,7 @@ function polyfill_oscpu_lang(pg, av){
 			var splited = av.split(';');
 			window.navigator.oscpu = splited[3];
 		}else if(!pg.gecko){
-			;
+			; //presto
 		}
 	}
 		
@@ -63,16 +63,6 @@ function polyfill_oscpu_lang(pg, av){
 	}
 }
 	
-function get_cpu_info(pg, n, ci){
-	var cc = "";
-	if(pg.trident){
-		cc = n.cpuClass;
-	}else if(pg.webkit || pg.blink){
-		cc = ci.cpuClass;
-	}else{
-		;
-	}
-}
 
 /*!
  * contentloaded.js
@@ -139,10 +129,6 @@ contentLoaded.apply(null, [window, function(){
 		"Windows NT 6.1":"Windows 7",
 		"Windows NT 6.2":"Windows 8",
 		"Windows NT 7.1":"Windows 10"
-	},
-	   
-	cputype_map = {
-	
 	},
 	    
 	OS = { //detecting OS data...
