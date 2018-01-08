@@ -894,7 +894,7 @@ contentLoaded.apply(null, [window, function(){
 	
     polyfill_oscpu_lang(w.webpage.engine, apv);
 	
-    w.navigator.osname = osver_map[w.navigator.oscpu] || "";
+    w.navigator.ostitle = osver_map[w.navigator.oscpu] || "";
 
  }, {}]);
  
