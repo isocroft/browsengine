@@ -47,7 +47,7 @@ function actual_non_emulated_IE_major_version() {
 function polyfill_oscpu_lang(eng, av){
 	if(window.navigator.oscpu === undefined){
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
-		if(eng.webkit || eng.blink || eng.microsoftedge){
+		if(eng.webkit || eng.blink || eng.edgehtml){
    			var e_index = av.indexOf(')');
 			window.navigator.oscpu = av.substring(b_index + 1, e_index);
 		}else if(eng.trident){
