@@ -49,7 +49,7 @@ function polyfill_oscpu_lang(eng, av){
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
 		if(eng.webkit || eng.blink){
    			var e_index = av.indexOf(')');
-			window.navigator.oscpu = av.substring(b_index, e_index);
+			window.navigator.oscpu = av.substring(b_index + 1, e_index);
 		}else if(eng.trident){
 			splited = av.split(';');
 			window.navigator.oscpu = splited[3];
@@ -130,7 +130,8 @@ contentLoaded.apply(null, [window, function(){
 		"Windows NT 5.1":"Windows XP",
 		"Windows NT 6.1":"Windows 7",
 		"Windows NT 6.2":"Windows 8",
-		"Windows NT 7.1":"Windows 10"
+		"Windows NT 10.0":"Windows 10",
+		"Windows NT 10.0; Win64; x64":"Windows 10"
 	},
 	    
 	OS = { //detecting OS data...
