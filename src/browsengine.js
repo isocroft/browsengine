@@ -46,15 +46,17 @@ function actual_non_emulated_IE_major_version() {
 
 function polyfill_oscpu_lang(pg, av){
 	if(window.navigator.oscpu === undefined){
+		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
 		if(pg.webkit || pg.blink){
    			var e_index = av.indexOf(')');
-			var b_index = av.indexOf(' ') + 1;
-   			window.navigator.oscpu = av.substring(b_index, e_index);
+			window.navigator.oscpu = av.substring(b_index, e_index);
 		}else if(pg.trident){
-			var splited = av.split(';');
+			splited = av.split(';');
 			window.navigator.oscpu = splited[3];
 		}else if(!pg.gecko){
-			; //presto
+			 //presto -> old Opera
+			 splited = av.split(';');
+			 window.navigator.oscpu = (splited[0] || "").substring(b_index);
 		}
 	}
 		
@@ -158,7 +160,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isOperaMobile:function(bd){
 		
-		    return  to_string(window.operamini) == '[object operamini]' || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamini")));
+		    return  (to_string(window.operamini) == '[object operamini]' && !!(bd.className += " operamobile")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamobile")));
 			
 		},
 		isIOS:function(bd){ 
@@ -195,7 +197,7 @@ contentLoaded.apply(null, [window, function(){
 
      /* Trident is the rendering engine used by older versions of IE */
 
-     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && (w.execScript || _engineFragment) && ('behavior' in body.style)),
+     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && (w.toStaticHTML || _engineFragment) && ('behavior' in body.style)),
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
 
@@ -240,7 +242,7 @@ contentLoaded.apply(null, [window, function(){
 	Device = {
 		isTouchCapable:function(){
 
-			return ('ontouchstart' in w)  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
+			return ('ontouchstart' in w)  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
 		},
 		onDesktop:function(){
 
@@ -313,16 +315,20 @@ contentLoaded.apply(null, [window, function(){
 			 }	  
 		  break;
 		  
-		  case "0.5634": // screendim - 360X640 - Portriat e.g Samsung Galaxy S3, 
-		  case "0.5625": // screendim - 320x568 - Portrait e.g iPhone
+		  case "0.5634": // screendim - 320x568 - Portriat e.g Samsung Galaxy S3, 
+		  case "0.5625": // screedim - 900x1600 Portrait, screendim - 720x1280, screendim - 360x640 - Portrait e.g iPhone
+	    	  case "0.5622": // screen - 375x667 - Portrait e.g
 		  	if(OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body)){
 			    	 
 				 if(Device.onMobile())
-	                     body.setAttribute("aria-view-mode","mobile");	
-            }     
+	                     		body.setAttribute("aria-view-mode","mobile");
+				
+				if(Device.onTablet())
+					body.setAttribute("aria-view-mode","tablet");
+            		}     
 		  break;
 		  
-		  case "0.5993": // screendim - 320x534 - Portrait e.g Techno, Samsung Galaxy S4
+		  case "0.5993": // screendim - 320x534 - Portrait e.g Techno, Samsung Galaxy S4, Nokia XL
 		  case "1.669": // screendim - 534x320 - Landscape
 		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
 			     if(z)
@@ -331,24 +337,24 @@ contentLoaded.apply(null, [window, function(){
 				    body.className += (screenfactor=="1.669")? " 534x320" : " 320x534";
 				 
 				 if(Device.onMobile())
-                     body.setAttribute("aria-view-mode","mobile");				 
+                     			body.setAttribute("aria-view-mode","mobile");				 
 			 }
 		  break;
 		  
 		  case "1.500": // screendim 480x320 - Landscape
 		  case "0.6667": // screendim 320x480 - Portrait
 		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
-			     if(z)
+			     	if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 480x320" : " 320x480";
 				 else
 				    body.className += (screenfactor=="0.6667")? " 320x480" : " 480x320";
 				 
 				 if(Device.onMobile())
-                     body.setAttribute("aria-view-mode","mobile");				 
+                     			body.setAttribute("aria-view-mode","mobile");				 
 			 }
 		  break;
 		  
-          case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
+          	  case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
 		  case "0.7500": // screendim - 1200x1600, screendim - 864x1152, screendim - 768x1024, screendim - 600x800, screendim - 360x480, screendim - 480x640 - Portrait e.g Nokia-XL
 		  case "0.7496": // IPad Pro
 		        if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && (w.screen.width >= 768)){
@@ -401,28 +407,43 @@ contentLoaded.apply(null, [window, function(){
 
           case "1.779": // screendim - 1366x768 Portrait
 		    if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
-               body.className += " 1366x768";
+               			body.className += " 1366x768";
 
-               if(Device.onTablet())
-               		body.setAttribute("aria-view-mode","tablet");
+               			if(Device.onTablet())
+               				body.setAttribute("aria-view-mode","tablet");
                
-               if(Device.onDesktop())
+               			if(Device.onDesktop())
 			   		body.setAttribute("aria-view-mode","desktop");
 			}   
           break;
 		  
-		  case "1.778": // screendim - 1920x1080
+	  case "1.778": // screendim - 1920x1080 Portrait, screendim - 1600x900 Portrait, screendim - 1280x720, screendim - 640x360 Landscape
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
-		       body.className += " 1920x1080";
+		       	    body.className += (w.screen.availWidth !== 1600 ? " 1920x1080" : "1600x900");
 		       
 		       	    if(Device.onDesktop())
 			   		body.setAttribute("aria-view-mode","desktop");
 			     
 			    if(Device.onTV())
 			   		body.setAttribute("aria-view-mode","tv");
+			}else{
+				if(z)
+				   body.className += (Math.abs(w.orientation) == 90)? " 640x360" : " 1080x1920";
 			}   
 		  break;
 		  
+	    case "0.6000": // Resolution screendim - 480x800
+	    case "1.667":
+		    if(!(OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width <= 768){
+               			body.className += " 480x800";
+
+               			if(Device.onTablet())
+               				body.setAttribute("aria-view-mode", "tablet");
+               
+               			if(Device.onDesktop())
+			   		body.setAttribute("aria-view-mode","desktop");
+			}   
+		    break;
 		  case "1.600": // Resolution - 1680x1050, Resolution  - 1440x900, Resolution - 1280x800
 		     if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 768){
 		        if(w.screen.width > 1440 && w.screen.width <= 1680) body.className += " 1680x1050"; 
