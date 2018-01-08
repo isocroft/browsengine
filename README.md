@@ -258,5 +258,5 @@ Please see the CONTRIBUTING.MD file for more details. Thank you.
 
 There are a couple of websites where **Browsengine** is already being used namely:
 
-- 1. **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
-- 2. **Stitch, Nigeria** - [Stitch Website/App](https://www.stitch.ng)
+- **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
+- **Stitch, Nigeria** - [Stitch Website/App](https://www.stitch.ng)
