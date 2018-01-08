@@ -31,7 +31,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 	      <meta charest="utf-8">
 		    <title>Browsengine - TestDrvie</title>
 		  
-		    <script type="text/javascript" src="/path/to/Modernizr.js"></script>
+		    <script type="text/javascript" src="/path/to/Modernizr.js"></script> <!-- optional -->
 		    <script type="text/javascript" src="/path/to/browsengine.js"></script>
 	   </head>
 	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
@@ -77,6 +77,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
 	
 	     console.log(navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
+	     console.log(navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro - 64 bits"
         </script>
 	 </body>
   </html>
