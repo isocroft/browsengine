@@ -95,9 +95,12 @@ After including the script to any page you choose (like above), it can be used o
  }
 
  body.yes-moz a[data-intro-text]:before{ /* Geckos -> Firefox, WebSpirit, IceDragon */
-    content:" :::";
+    content:" This is a link to Facebook"; /* Accessibility for screen readers for visually-impared/non-sighted users */
+    width: 1px;
+    height:1px;
+    overflow:hidden;
     position:absolute;
-    top:-5%;
+    top:-10px;
  }
 
  /* Using the screen dimensions to style the page */
@@ -122,6 +125,11 @@ After including the script to any page you choose (like above), it can be used o
     padding:5px;
     display:table-cell;
     vertical-align:middle; /* culled from Ire Aderinokuns' Code Pen */
+ }
+ 
+ /* in opera-mobile */
+ body.operamobile[aria-view-mode="mobile"] span.tooltip {
+    display:inline-block;
  }
  
  [aria-view-mode="tablet"] span.tooltip{
@@ -175,10 +183,10 @@ body[class*='standards IE7'] [class*='column-']{
 
 /* target all gecko browsers firefox, UC, Maxthone */
 html .gecko .banner {
-  max-width:100%;
-  height:400px;
+  	max-width:100%;
+  	height:400px;
 	-moz-transition:all .7s linear;
-  background-size:cover;
+  	background-size:cover;
 }
 
 /* target an edge browser for svg banner image */
@@ -205,12 +213,12 @@ html .gecko .banner {
 }
 
 /* display an upgrade messsage for users surfing with old browsers */
-.browser-update{
-  position:relaive;
+.browser-update {
+  position:relative;
   display:none !important;
 }
 
-.browser-update:after{
+.browser-update:after {
    content:"This browser is very old. For better experience please upgrade";
    display:block;
    position:absolute;
