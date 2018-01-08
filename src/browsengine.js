@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.6
+ * @version: 0.0.7
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 04/12/2017
+ * @updated: 08/01/2018
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  */
@@ -361,10 +361,10 @@ contentLoaded.apply(null, [window, function(){
 				   body.className += (screenfactor=="1.333")? (w.screen.width <= 1024? " 1024x768" : " 1152x864") : (w.screen.width <= 768?" 768x1024" : " 864x1152");
 				   
 				   if(Device.onTablet())	
-				      body.setAttribute("aria-view-mode", "tablet");
+				      	body.setAttribute("aria-view-mode", "tablet");
 				   
 				   if(Device.onDesktop())
-                      body.setAttribute("aria-view-mode", "desktop");
+                      			body.setAttribute("aria-view-mode", "desktop");
 
 				}else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
 				      
@@ -374,7 +374,7 @@ contentLoaded.apply(null, [window, function(){
 						else
 						   body.className += (screenfactor=="1.333")? " 800x600" : " 600x800";
 						   
-                        body.setAttribute("aria-view-mode","tablet");
+                        		   body.setAttribute("aria-view-mode","tablet");
 				    }else if(Device.onMobile() && w.screen.width >= 360){
 					    if(z)
 				           body.className += (Math.abs(w.orientation || 0) == 90)?  " 480x360 640x480" : " 360x480 480x640";
@@ -787,7 +787,7 @@ contentLoaded.apply(null, [window, function(){
 
           		 if (body.className.indexOf("yes-blink") == -1){
 
-                       body.className += " yes-blink chrome";
+                       		body.className += " yes-blink chrome";
 
           		 }
 		  
