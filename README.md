@@ -73,6 +73,10 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina or "normal"
             console.hlog(window.webpage.device.screen.dpi);
             console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
+	
+	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
+	
+	     console.log(navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
         </script>
 	 </body>
   </html>
