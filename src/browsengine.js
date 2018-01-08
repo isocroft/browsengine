@@ -47,7 +47,7 @@ function actual_non_emulated_IE_major_version() {
 function polyfill_oscpu_lang(eng, av){
 	if(window.navigator.oscpu === undefined){
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
-		if(eng.webkit || eng.blink){
+		if(eng.webkit || eng.blink || eng.microsoftedge){
    			var e_index = av.indexOf(')');
 			window.navigator.oscpu = av.substring(b_index + 1, e_index);
 		}else if(eng.trident){
@@ -128,10 +128,12 @@ contentLoaded.apply(null, [window, function(){
 	
 	osver_map = {
 		"Windows NT 5.1":"Windows XP",
-		"Windows NT 6.1":"Windows 7",
-		"Windows NT 6.2":"Windows 8",
+		"Windows NT 6.1":"Windows 7 - 32 bits",
+		"Windows NT 6.1; Win64; x64":"Windows 7 - 64 bits",
+		"Windows NT 6.2":"Windows 8 - 32 bits",
+		"Windows NT 6.2; Win64; x64":"Windows 8 - 64 bits",
 		"Windows NT 10.0":"Windows 10",
-		"Windows NT 10.0; Win64; x64":"Windows 10"
+		"Windows NT 10.0; Win64; x64":"Windows 10 Pro - 64 bits"
 	},
 	    
 	OS = { //detecting OS data...
