@@ -44,16 +44,16 @@ function actual_non_emulated_IE_major_version() {
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
 }
 
-function polyfill_oscpu_lang(pg, av){
+function polyfill_oscpu_lang(eng, av){
 	if(window.navigator.oscpu === undefined){
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
-		if(pg.webkit || pg.blink){
+		if(eng.webkit || eng.blink){
    			var e_index = av.indexOf(')');
 			window.navigator.oscpu = av.substring(b_index, e_index);
-		}else if(pg.trident){
+		}else if(eng.trident){
 			splited = av.split(';');
 			window.navigator.oscpu = splited[3];
-		}else if(!pg.gecko){
+		}else if(!eng.gecko){
 			 //presto -> old Opera
 			 splited = av.split(';');
 			 window.navigator.oscpu = (splited[0] || "").substring(b_index);
@@ -888,6 +888,10 @@ contentLoaded.apply(null, [window, function(){
           w.webpage.engine.blink = true;      
 
     }	
+	
+    polyfill_oscpu_lang(w.webpage.engine, apv);
+	
+    w.navigator.osname = osver_map[w.navigator.oscpu] || "";
 
  }, {}]);
  
