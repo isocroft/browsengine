@@ -253,3 +253,10 @@ Available on all major browsers including IE - plus **Browsengine** reports the 
 ## Contributing
 
 Please see the CONTRIBUTING.MD file for more details. Thank you.
+
+## Testimonies / Users
+
+There are a couple of websites where **Browsengine** is already being used namely:
+
+	1. **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
+	2. **Stitch, Nigeria** - [Stitch Website/App](https://www.stitch.ng)
