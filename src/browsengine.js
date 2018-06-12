@@ -1,14 +1,28 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.7
+ * @version: 0.0.8
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 08/01/2018
+ * @updated: 23/03/2018
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
+ *
+ * All Rights Reserved. Copyright (c) 2014 - 2018
  */
  
+ 
+
+/* @TODO:
+
+ 	BROWSENGINE FIX - Nexus Tablet { width:601px ,  pixelDensity:1.332 }
+
+ 	Nexus Tablet ====> wrongly passes as "Mobile Device" - fix with aspect-ratio calculations in JS 
+
+*/
+
+
+
  
 !function(hasInterface, undefined){
 
@@ -23,7 +37,12 @@ function is_own_prop(obj, prop){
 	
 function has_pcredentials_iconurl(){
 	try{
-		var cred = new window.PasswordCredential({name:"-",iconURL:"http://lab.example.com",password:"-",id:"-"});
+		var cred = new window.PasswordCredential({
+									name:"-",
+									iconURL:"http://lab.example.com",
+									password:"-",
+									id:"-"
+		});
 		return (cred.iconURL === "http://lab.example.com/");
 	}catch(ex){
 		return false;
@@ -37,6 +56,7 @@ function actual_non_emulated_IE_major_version() {
     // @cc_on docs: https://msdn.microsoft.com/library/8ka90k2e%28v=vs.94%29.aspx
 
     var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')(); // jshint ignore:line
+    
     if (jscriptVersion === undefined) {
        jscriptVersion = 11; // IE11+ not in emulation mode
     }
@@ -129,11 +149,12 @@ contentLoaded.apply(null, [window, function(){
 	osver_map = {
 		"Windows NT 5.1":"Windows XP",
 		"Windows NT 6.1":"Windows 7 - 32 bits",
-		"Windows NT 6.1; Win64; x64":"Windows 7 - 64 bits",
+		"Windows NT 6.1; Win64; x64":"Windows 7; Intel - 64 bits",
 		"Windows NT 6.2":"Windows 8 - 32 bits",
-		"Windows NT 6.2; Win64; x64":"Windows 8 - 64 bits",
+		"Windows NT 6.2; Win64; x64":"Windows 8; Intel - 64 bits",
 		"Windows NT 10.0":"Windows 10",
-		"Windows NT 10.0; Win64; x64":"Windows 10 Pro - 64 bits"
+		"Windows NT 10.0; Win64; x64":"Windows 10 Pro; Intel - 64 bits",
+		"Macintosh; Intel Mac OS X 10_13_2":"Macintosh OS X 10; Intel - 64 bits"
 	},
 	    
 	OS = { //detecting OS data...
@@ -171,19 +192,21 @@ contentLoaded.apply(null, [window, function(){
 		    return (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
-	    	isAndriod:function(bd){
+    	isAndriod:function(bd){
 		
 		  return (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
 		  
 		},
-	    	isBB:function(bd){
+    	isBB:function(bd){
 		
-		   return (ua.search(/BlackBerry|\bBB\d+/) > -1);
+			// @See: http://ryanmorr.com/the-state-of-browser-detection/
+			return ('blackberry' in window) && (ua.search(/BlackBerry|\bBB\d+/) > -1);
 		   
 		},
 		isWebOS:function(){
 		   
-		   return (ua.search(/(Web|HPW)OS/) > -1);
+		   // @See: http://ryanmorr.com/the-state-of-browser-detection/
+		   return ('PalmSystem' in window) && (ua.search(/(Web|HPW)OS/) > -1);
 		   
 		}	
 	},
@@ -212,7 +235,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	/* setup info object - {webpage} */
 
-	w.webpage = {engine:{},old:{},device:{screen:{},os:null}};
+	w.webpage = {engine:{},old:{},device:{screen:{},os:''}};
 
 	var winHeight = w.innerHeight || rt.clientHeight || body.clientHeight,
 	
@@ -234,7 +257,7 @@ contentLoaded.apply(null, [window, function(){
 	 
 	if(isTrident || isGecko){
 	    
-		 pixelDensity = parseInt(w.screen.availWidth / winWidth);
+		 pixelDensity = (w.devicePixelRatio || parseFloat(w.screen.availWidth / winWidth));
 		
 	}else{
 	  
@@ -249,13 +272,13 @@ contentLoaded.apply(null, [window, function(){
 		},
 		onDesktop:function(){
 
-			return (((~~pixelDensity) == 1) && (w.screen.width >= 1024 && ( w.screen.width < 1920 || !this.onTV())) && !(this.onTablet(true)));
+			return (((~~pixelDensity) == 1) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
 		},
 		onTV:function(){
 
 			if(!this.isTouchCapable()) return false;
 
-			return ((~~pixelDensity) == 1.5) && (w.screen.width >= 1920);
+			return ((~~pixelDensity) == 1.5) && (w.screen.width > 1920);
 		},
 		onTablet:function(canBeCapable){
 
@@ -272,6 +295,7 @@ contentLoaded.apply(null, [window, function(){
 
 	    	if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
 
+	    	
 	    	/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
 		
 		    return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width < 768) && (w.screen.width / pixelDensity) < 768);
@@ -357,7 +381,7 @@ contentLoaded.apply(null, [window, function(){
 			 }
 		  break;
 		  
-          	  case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
+      	  case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
 		  case "0.7500": // screendim - 1200x1600, screendim - 864x1152, screendim - 768x1024, screendim - 600x800, screendim - 360x480, screendim - 480x640 - Portrait e.g Nokia-XL
 		  case "0.7496": // IPad Pro
 		        if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && (w.screen.width >= 768)){
@@ -528,7 +552,7 @@ contentLoaded.apply(null, [window, function(){
 		browserVersion = parseFloat(browserVersion);
 	
 	
-	    if(browserVersion  <= 8.0 && browserName == "msie" && isTrident){
+	    if(browserVersion  <= 9.0 && browserName == "msie" && isTrident){
 	     
 	     	/* 
 	     		There are several browsers using the [Trident] engine,
@@ -540,7 +564,7 @@ contentLoaded.apply(null, [window, function(){
      		 w.webpage.old.ie = true;
 	    }
 		
-		if(browserVersion <= 10.0 && browserName == "opera" && isPresto){
+		if(browserVersion <= 11.6 && browserName == "opera" && isPresto){
 
 			/* There is only one browser using the [Presto] engine */
 			/* Though Opera now uses the [Blink] engine as from 15.0+ */
@@ -550,7 +574,7 @@ contentLoaded.apply(null, [window, function(){
 		    w.webpage.old.opera = true;
 		}
 			
-		if(browserVersion <= 4.0 && browserName == "mozilla" && isGecko){
+		if(browserVersion <= 36.2 && browserName == "mozilla" && isGecko){
 
 			/* 
 				There are sevral browsers using the Mozillas' Gecko engine 
@@ -566,15 +590,22 @@ contentLoaded.apply(null, [window, function(){
 
 		    if(ua.match(/flock/i)){
 
-		    	/* From versions 1 - 3, Flock uses the Gecko engine */
+		    	/* From versions 1 - 3, Flock uses the [Gecko] engine */
 
 		    	body.className += " oldFlock";
 
 		    	w.webpage.old.flock = true;
 		    }
 		}	
+
+		if(browserVersion <= 13.0 && browserName == "edge" && isEdgeHTML){
+
+			body.className += " oldEdge";
+
+		    w.webpage.old.edge = true;
+		}
 			
-		if(browserVersion <= 12.0 && browserName == "webkit" && !isBlink){
+		if(browserVersion <= 40.0 && browserName == "webkit" && !isBlink){
 		     		   
 		    body.className += (isChrWebkit)? " oldChrome" : (isSafWebkit? " oldSafari": "");
 
@@ -662,7 +693,7 @@ contentLoaded.apply(null, [window, function(){
         var ieVersion = (function(reg){
 		       
 		       /*
-		        O-o shine ya eye... this version number might be due to emulation !!!
+		        * 	O-o shine ya eye... this version number might be due to emulation !!!
 		        */
 		         
 	           return parseInt(ua.match(reg)[2]);
@@ -683,15 +714,36 @@ contentLoaded.apply(null, [window, function(){
 		    ieActual = parseInt(ieTag);
 		    ieTag = " IE"+ieActual;
 		}
+
+		switch(ieActual){
+			case 7:
+				window.webpage.engine.version = "3.0";
+			break;
+			case 8:
+				window.webpage.engine.version = "4.0";
+			break;
+			case 9:
+				window.webpage.engine.version = "5.0";
+			break;
+			case 10:
+				window.webpage.engine.version = "5.0";
+			break;
+			case 11:
+				window.webpage.engine.version = "7.0";
+			break;
+		}
 		
 	    /* Here we are just inserting a marker for IE10+ */
 
-        body.className += (ieActual >= 10)? " yes-ms" : " yes-old-ms"; // @TODO: need to fix possible bug here... maybe this line should go altogether (still thinking)
+        body.className += " yes-ms";
 
 
-      	/* Here we are detecting Internet Explorer 7 - 10+... */
+      	/* Here we are detecting Internet Explorer 7 - 11 */
          
-        if(d[dd] && d[dd] === ieActual  && ("msInterpolationMode" in body.style || 'msLinearGradient' in body.style)){ // IE(7-10)+
+        if(d[dd] && d[dd] === ieActual  
+        	&& (("msInterpolationMode" in body.style) 
+        			|| ('msLinearGradient' in body.style) 
+        				|| (!!window.MSInputMethodContext))){ // IE (7-11)
 		     
 		     if(body.className.indexOf(ieTag.substring(1)) == -1){    
 
@@ -700,7 +752,7 @@ contentLoaded.apply(null, [window, function(){
 
 		}else{
 		
-		     /* Here we are detecting Internet Explorer 4 - 6 only... */
+		     /* Here we are detecting Internet Explorer 4 - 6 only */
 
              body.className += ieTag;      		 
 		}
@@ -796,11 +848,17 @@ contentLoaded.apply(null, [window, function(){
 		  
 		    	/* Detecting Vivaldi Browser for Desktop (Blink Engine) ... */
 		  
-		  	if(ua.match(/vivaldi\/(?:[\d]{1,}\.[\d]{1,})/)){
-				  
-					  body.className += " yes-blink vivaldi";
-				  
-			}
+			  	if(ua.match(/vivaldi\/(?:[\d]{1,}\.[\d]{1,})/)){
+					  
+						  body.className += " yes-blink vivaldi";
+					  
+				}
+
+				else if(ua.indexOf('nokia_xl')) {  
+
+			     	  		body.className += " yes-blink nokia_xl";  
+
+	     	    }
 
           		 body.className += " blink like-gecko like-khtml";
 
@@ -822,13 +880,18 @@ contentLoaded.apply(null, [window, function(){
 
 
 			     	  }
-		       
+
+
+			     	  else if(ua.indexOf('nokia_xl')) {  
+
+			     	  		body.className += " yes-webkit nokia_xl";  
+
+			     	  }
 		       		  
 
 			     	  /* Other Browser(s) desktop */
 
 			     	  else {
-
 
                				body.className += " yes-webkit chrome";
 
@@ -867,6 +930,32 @@ contentLoaded.apply(null, [window, function(){
 	 */
 
     else  if (('OBackgroundSize' in body["style"] && 'attachEvent' in d) || (isPresto && browserName == 'opera')){
+
+    	   var oprVersion = parseInt(w.opera.version());
+
+    	   switch(oprVersion){
+    	   	case 7:
+    	   		window.webpage.engine.version = "2.6";
+    	   	break;
+			case 8:
+				window.webpage.engine.version = "2.7";
+			break;
+			case 9:
+				window.webpage.engine.version = "2.8";
+			break;
+			case 10:
+				window.webpage.engine.version = "2.9";
+			break;
+			case 11:
+				window.webpage.engine.version = "2.10";
+			break;
+			case 12:
+				window.webpage.engine.version = "2.11";
+			break;
+			case 13:
+				window.webpage.engine.version = "2.12";
+			break;
+		}	 
 
           if (body.className.indexOf("yes-opera") == -1){
 
