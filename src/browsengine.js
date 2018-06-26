@@ -154,7 +154,8 @@ contentLoaded.apply(null, [window, function(){
 		"Windows NT 6.2; Win64; x64":"Windows 8; Intel - 64 bits",
 		"Windows NT 10.0":"Windows 10",
 		"Windows NT 10.0; Win64; x64":"Windows 10 Pro; Intel - 64 bits",
-		"Macintosh; Intel Mac OS X 10_13_2":"Macintosh OS X 10; Intel - 64 bits"
+		"Macintosh; Intel Mac OS X 10_13_2":"Macintosh OS X 10; Intel - 64 bits",
+		"Linux; Andriod 4.1.2":"Linux Android Jelly Bean; - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
 	},
 	    
 	OS = { //detecting OS data...
@@ -182,21 +183,21 @@ contentLoaded.apply(null, [window, function(){
 		     return (n.platform.indexOf("Win") == 0) && ((ua.indexOf("Windows Phone") > 0) || (ua.indexOf("IEMobile") > 0) || (ua.indexOf("WPDesktop") > 0));
 			 
 		},
-		isOperaMini:function(bd){
+		isOperaMini:function(bd){ // available on Android & IOS & Windows Mobile OSes only
 		
-		    return  (to_string(window.operamini) == '[object operamini]' && !!(bd.className += " operamini")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamobile")));
+		    return  (to_string(window.operamini) == '[object operamini]' && !!(bd.className += " operamini")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamini")));
 			
 		},
-		isOperaMobile:function(bd){
+		isOperaMobile:function(bd){ // available on Android & Windows Mobile OSes only
 		
-		    return (typeof window.operamini === undefined) && () && (n.vendor === 'Opera Software ASA');
+		    return (typeof window.operamini === undefined) && _engineFragment && (OS.isAndroid(bd) || OS.isWinMobile(bd)) && (n.vendor === 'Opera Software ASA') && !!(bd && (bd.className += " operamobile"));
 		},
 		isIOS:function(bd){ 
 		
 		    return !(OS.isWinMobile(bd)) && (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
-    		isAndriod:function(bd){
+    		isAndroid:function(bd){
 		
 		  return !(OS.isWinMobile(bd)) && (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
 		  
@@ -207,7 +208,7 @@ contentLoaded.apply(null, [window, function(){
 			return ('blackberry' in window) && (ua.search(/BlackBerry|\bBB\d+/) > -1);
 		   
 		},
-		isWebOS:function(){
+		isWebOS:function(bd){
 		   
 		   // @See: http://ryanmorr.com/the-state-of-browser-detection/
 		   return ('PalmSystem' in window) && (ua.search(/(Web|HPW)OS/) > -1);
@@ -332,7 +333,7 @@ contentLoaded.apply(null, [window, function(){
 				if(Device.onDesktop())
                    body.setAttribute("aria-view-mode", "desktop");
 
-			 }else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
+			 }else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 			    if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 1024x600" : " 600x1024";
 				else
@@ -349,7 +350,7 @@ contentLoaded.apply(null, [window, function(){
 		  case "0.5634": // screendim - 320x568 - Portriat e.g Samsung Galaxy S3, 
 		  case "0.5625": // screedim - 900x1600 Portrait, screendim - 720x1280, screendim - 360x640 - Portrait e.g iPhone
 	    	  case "0.5622": // screen - 375x667 - Portrait e.g
-		  	if(OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body)){
+		  	if(OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body)){
 			    	 
 				 if(Device.onMobile())
 	                     		body.setAttribute("aria-view-mode","mobile");
@@ -361,7 +362,7 @@ contentLoaded.apply(null, [window, function(){
 		  
 		  case "0.5993": // screendim - 320x534 - Portrait e.g Techno, Samsung Galaxy S4, Nokia XL
 		  case "1.669": // screendim - 534x320 - Landscape
-		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
+		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 			     if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 534x320" : " 320x534";
 				else
@@ -374,7 +375,7 @@ contentLoaded.apply(null, [window, function(){
 		  
 		  case "1.500": // screendim 480x320 - Landscape
 		  case "0.6667": // screendim 320x480 - Portrait
-		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
+		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 			     	if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 480x320" : " 320x480";
 				 else
@@ -397,7 +398,7 @@ contentLoaded.apply(null, [window, function(){
 				   if(Device.onDesktop())
                       			body.setAttribute("aria-view-mode", "desktop");
 
-				}else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isIOS(body) || OS.isOperaMobile(body))){
+				}else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 				      
 				    if(Device.onTablet() && (w.screen.width >= 800)){
 					    if(z)
@@ -632,12 +633,44 @@ contentLoaded.apply(null, [window, function(){
 		    }
 		}	
 	
-        if(OS.isWinPC()){
+		if(OS.isIOS(body)){
 	
-	           body.setAttribute('aria-os-data','Windows');
+	           	body.setAttribute('aria-os-data', 'iOS');
 
-	           w.webpage.device.os = 'windows';
+	           	w.webpage.device.os = 'ios';
 	
+	    	}else if(OS.isAndroid(body)){
+		
+			   body.setAttribute('aria-os-data', 'Linux Andriod');
+
+			   w.webpage.device.os = 'linux andriod';
+
+		}else if(OS.isWinPC(body)){
+	
+	           	body.setAttribute('aria-os-data','Windows');
+
+	           	w.webpage.device.os = 'windows';
+	
+		}else if(OS.isBB(body)){
+		    
+		    	body.setAttribute('aria-os-data','Blackberry');
+
+	           	w.webpage.device.os = 'blackberry';
+		    
+	    }else if(OS.isWebOS(body)){
+		    
+		    	body.setAttribute('aria-os-data','Web OS');
+
+	           	w.webpage.device.os = 'webos';
+		    
+	    }else if(OS.isOperaMini(body)){
+		    
+		    	body.setAttribute('aria-browser-data','Opera Mini');
+		    
+	    }else if(OS.isOperaMobile(body)){
+		    
+		    	body.setAttribute('aria-browser-data','Opera Mobile');
+		    
 	    }else if(OS.isMac(body)){
 	
 	           body.setAttribute('aria-os-data','Macintosh');
@@ -650,25 +683,13 @@ contentLoaded.apply(null, [window, function(){
 
 		       w.webpage.device.os = 'sun';
 		
-		}else if(OS.isLinux(body)){
+	}else if(OS.isLinux(body)){
 	
 	           body.setAttribute('aria-os-data','Linux');
 
-	           w.webpage.device.os = 'linux'
+	           w.webpage.device.os = 'linux';
 	
-	    }else if(OS.isIOS(body)){
-	
-	           body.setAttribute('aria-os-data', 'iOS');
-
-	           w.webpage.device.os = 'ios';
-	
-	    }else if(OS.isAndriod(body)){
-		
-			   body.setAttribute('aria-os-data', 'Linux Andriod');
-
-			   w.webpage.device.os = 'linux andriod';
-
-		}else{
+	 }else{
 		       body.setAttribute('aria-os-data','unknown');
 
 		       w.webpage.device.os = 'unknown';
