@@ -1,7 +1,7 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.8
+ * @version: 0.0.9
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
  * @updated: 23/03/2018
@@ -38,10 +38,10 @@ function is_own_prop(obj, prop){
 function has_pcredentials_iconurl(){
 	try{
 		var cred = new window.PasswordCredential({
-									name:"-",
-									iconURL:"http://lab.example.com",
-									password:"-",
-									id:"-"
+			name:"-",
+			iconURL:"http://lab.example.com",
+			password:"-",
+			id:"-"
 		});
 		return (cred.iconURL === "http://lab.example.com/");
 	}catch(ex){
@@ -142,7 +142,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	body, Device, isGecko = false, isEdgeHTML = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isKDE = false, nk = ua.toLowerCase(),
 	
-	_engineFragment = ((w.chrome || d.readyState) && 'clientInformation' in w && 'all' in d), z = (('orientation' in w) && !('ondeviceorientation' in w)),
+	_engineFragment = ((w.chrome || d.readyState) && 'clientInformation' in w), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
 	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
@@ -182,22 +182,26 @@ contentLoaded.apply(null, [window, function(){
 		     return (n.platform.indexOf("Win") == 0) && ((ua.indexOf("Windows Phone") > 0) || (ua.indexOf("IEMobile") > 0) || (ua.indexOf("WPDesktop") > 0));
 			 
 		},
+		isOperaMini:function(bd){
+		
+		    return  (to_string(window.operamini) == '[object operamini]' && !!(bd.className += " operamini")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamobile")));
+			
+		},
 		isOperaMobile:function(bd){
 		
-		    return  (to_string(window.operamini) == '[object operamini]' && !!(bd.className += " operamobile")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamobile")));
-			
+		    return (typeof window.operamini === undefined) && () && (n.vendor === 'Opera Software ASA');
 		},
 		isIOS:function(bd){ 
 		
-		    return (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
+		    return !(OS.isWinMobile(bd)) && (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
-    	isAndriod:function(bd){
+    		isAndriod:function(bd){
 		
-		  return (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
+		  return !(OS.isWinMobile(bd)) && (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
 		  
 		},
-    	isBB:function(bd){
+    		isBB:function(bd){
 		
 			// @See: http://ryanmorr.com/the-state-of-browser-detection/
 			return ('blackberry' in window) && (ua.search(/BlackBerry|\bBB\d+/) > -1);
@@ -223,11 +227,11 @@ contentLoaded.apply(null, [window, function(){
 
      /* Trident is the rendering engine used by older versions of IE */
 
-     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && (w.toStaticHTML || _engineFragment) && ('behavior' in body.style)),
+     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && ((w.toStaticHTML && ('all' in d)) || _engineFragment) && ('behavior' in body.style)),
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
 
-     isEdgeHTML = ('crypto' in w) && _engineFragment && /Edge/g.test(ua) && ('msCredentials' in w) && (w.chrome.runtime === undefined) && !isTrident,
+     isEdgeHTML = ('crypto' in w) && ('all' in d) && _engineFragment && /Edge/g.test(ua) && ('msCredentials' in w) && (w.chrome.runtime === undefined) && !isTrident,
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
@@ -245,15 +249,15 @@ contentLoaded.apply(null, [window, function(){
 	
 	screenfactor = ((w.screen.width/w.screen.height).toPrecision(4)),
 	
-    dpi = w.screen.colorDepth || w.screen.pixelDepth; // mostly '32' ... sometimes '24'
+    	dpi = w.screen.colorDepth || w.screen.pixelDepth; // mostly '32' ... sometimes '24'
 
-    w.webpage.device.screen.dpi = dpi;
+    	w.webpage.device.screen.dpi = dpi;
 
-    /* 
-		if the engine in use is Gecko (firefox, flock, webspirit, e.t.c) 
-		or the engine in use is Trident (IE), [pixel-density] is calculated in
-		the most approximate manner.
-	*/
+   	 	/* 
+			if the engine in use is Gecko (firefox, flock, webspirit, e.t.c) 
+			or the engine in use is Trident (IE), [pixel-density] is calculated in
+			the most approximate manner - 86% correct {probability}.
+		*/
 	 
 	if(isTrident || isGecko){
 	    
@@ -261,7 +265,7 @@ contentLoaded.apply(null, [window, function(){
 		
 	}else{
 	  
-	     pixelDensity = w.devicePixelRatio;
+		pixelDensity = w.devicePixelRatio;
 
 	}
 
@@ -288,17 +292,17 @@ contentLoaded.apply(null, [window, function(){
 				} 
 			}
 		
-		    return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onMobile();
+		    	return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onMobile();
 			
 		},
-	    onMobile:function(){
+	    	onMobile:function(){
 
-	    	if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
+	    		if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
 
 	    	
-	    	/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
+	    		/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
 		
-		    return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width < 768) && (w.screen.width / pixelDensity) < 768);
+		    	return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width < 768) && (w.screen.width / pixelDensity) < 768);
 		
 		}
 	};
@@ -541,11 +545,11 @@ contentLoaded.apply(null, [window, function(){
    
    		/* retrieve browser build name (if any) */
 
-        browserName = j[1] || "unknown";
+        	browserName = j[1] || "unknown";
 	
 		/* take out minor version number and/or patch version number (if any) */
 
-	    browserVersion = parseInt( j[2] || "0" ).toPrecision(2);  
+	    	browserVersion = parseInt( j[2] || "0" ).toPrecision(2);  
 		
 		/* Finally, clean it up */
 
@@ -564,7 +568,7 @@ contentLoaded.apply(null, [window, function(){
      		 w.webpage.old.ie = true;
 	    }
 		
-		if(browserVersion <= 11.6 && browserName == "opera" && isPresto){
+		if(browserVersion <= 10.6 && browserName == "opera" && isPresto){
 
 			/* There is only one browser using the [Presto] engine */
 			/* Though Opera now uses the [Blink] engine as from 15.0+ */
@@ -574,7 +578,7 @@ contentLoaded.apply(null, [window, function(){
 		    w.webpage.old.opera = true;
 		}
 			
-		if(browserVersion <= 36.2 && browserName == "mozilla" && isGecko){
+		if(browserVersion <= 35.0 && browserName == "mozilla" && isGecko){
 
 			/* 
 				There are sevral browsers using the Mozillas' Gecko engine 
@@ -772,6 +776,8 @@ contentLoaded.apply(null, [window, function(){
 		    body.className += " microsoftedge like-gecko like-khtml";
 
 		    w.webpage.engine.edgehtml = true;
+			
+			w.webpage.device.browser_build = 'edgehtml-edge';
 
 		} 
 	}
@@ -846,6 +852,8 @@ contentLoaded.apply(null, [window, function(){
 
           		 }
 		  
+		  	w.webpage.engine.version = '537.36';
+		  
 		    	/* Detecting Vivaldi Browser for Desktop (Blink Engine) ... */
 		  
 			  	if(ua.match(/vivaldi\/(?:[\d]{1,}\.[\d]{1,})/)){
@@ -854,15 +862,17 @@ contentLoaded.apply(null, [window, function(){
 					  
 				}
 
-				else if(ua.indexOf('nokia_xl')) {  
+				if(ua.indexOf('nokia_xl')) {  
 
-			     	  		body.className += " yes-blink nokia_xl";  
+			     	  		body.className += " nokia_xl";  
 
-	     	    }
+	     	    		}
 
           		 body.className += " blink like-gecko like-khtml";
 
-				 w.webpage.engine.blink = true; 
+				 w.webpage.engine.blink = true;
+		  
+		  		w.webpage.device.browser_build = 'blink-chrome';
 
           }else{
 
@@ -882,9 +892,9 @@ contentLoaded.apply(null, [window, function(){
 			     	  }
 
 
-			     	  else if(ua.indexOf('nokia_xl')) {  
+			     	  if(ua.indexOf('nokia_xl')) {  
 
-			     	  		body.className += " yes-webkit nokia_xl";  
+			     	  		body.className += " nokia_xl";  
 
 			     	  }
 		       		  
@@ -903,6 +913,8 @@ contentLoaded.apply(null, [window, function(){
           		body.className += " webkit like-gecko like-khtml";
 
 				w.webpage.engine.webkit = true; 
+		  
+		  		w.webpage.device.browser_build = 'webkit-chrome';
           
             }
 
@@ -918,7 +930,9 @@ contentLoaded.apply(null, [window, function(){
 
 	              }
 	
-			  	  w.webpage.engine.webkit = true;	
+			  	  w.webpage.engine.webkit = true;
+		
+				  w.webpage.device.browser_build = 'webkit-safari';
 	          
 	}
 	
@@ -969,7 +983,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Here we are detecting Opera from version 15.0+ */
 
-    else if(/Blink/g.test(ua) || isBlink && !isPresto && browserName == 'opr'){
+    else if(/Blink/g.test(ua) || isBlink && !isPresto && (browserName == 'opr' && n.vendor === 'Google Inc.')){
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
@@ -977,7 +991,11 @@ contentLoaded.apply(null, [window, function(){
 
           }
 
-          w.webpage.engine.blink = true;      
+          w.webpage.engine.blink = true;
+	    
+	   w.webpage.engine.version = "537.36";
+	    
+	  w.webpage.device.browser_build = 'blink-opera';
 
     }	
 	
