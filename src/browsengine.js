@@ -4,7 +4,7 @@
  * @version: 0.0.9
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 23/03/2018
+ * @updated: 12/07/2018
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -155,7 +155,7 @@ contentLoaded.apply(null, [window, function(){
 		"Windows NT 10.0":"Windows 10",
 		"Windows NT 10.0; Win64; x64":"Windows 10 Pro; Intel - 64 bits",
 		"Macintosh; Intel Mac OS X 10_13_2":"Macintosh OS X 10; Intel - 64 bits",
-		"Linux; Andriod 4.1.2":"Linux Android Jelly Bean; - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
+		"Linux; Andriod 4.1.2; Nokia_XL Build/JZO54K":"Linux Android Jelly Bean; ARM - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
 	},
 	    
 	OS = { //detecting OS data...
@@ -240,7 +240,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	/* setup info object - {webpage} */
 
-	w.webpage = {engine:{},old:{},device:{screen:{},os:''}};
+	w.webpage = {engine:{},old:{},device:{screen:{},os:'',browser_build:''}};
 
 	var winHeight = w.innerHeight || rt.clientHeight || body.clientHeight,
 	
@@ -665,11 +665,11 @@ contentLoaded.apply(null, [window, function(){
 		    
 	    }else if(OS.isOperaMini(body)){
 		    
-		    	body.setAttribute('aria-browser-data','Opera Mini');
+		    	body.setAttribute('aria-user-agent','Opera Mini');
 		    
 	    }else if(OS.isOperaMobile(body)){
 		    
-		    	body.setAttribute('aria-browser-data','Opera Mobile');
+		    	body.setAttribute('aria-user-agent','Opera Mobile');
 		    
 	    }else if(OS.isMac(body)){
 	
@@ -813,12 +813,14 @@ contentLoaded.apply(null, [window, function(){
            if (body.className.indexOf("yes-moz") == -1){
                   
                   body.className+=" yes-moz firefox gecko";
+		   
+		   w.webpage.device.browser_build = 'gecko-firefox';
 
            }
 				  
 		   if(browserName == "rv"){
 
-			       if(OS.onTablet() || OS.onMobile()){
+			       if(Device.onTablet() || Device.onMobile()){
 
 				       	body.className+=" firefoxos";
 
@@ -845,6 +847,7 @@ contentLoaded.apply(null, [window, function(){
         */		
 
     	w.webpage.engine.gecko = true;
+	    
 
     }
      
