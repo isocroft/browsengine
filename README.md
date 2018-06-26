@@ -55,29 +55,29 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             
                 // the console object is never available when dev tools is not open
                 if(!window.console && window.webpage.old.ie)){
-                    console = {
-                        hlog:function(msg){
-                            document.body.innerHTML += msg;
-                        }
+                    window.console = {
+                        
                     }
-                }else{
-                    window.console.hlog = function(msg){
-                            document.body.innerHTML += msg;
-                    }
-                }
+                };
+                    
+		window.console.hlog = function(msg){
+		    document.body.innerHTML += msg;
+	    	}
+                
 
             /* Browsengine exposes an object {webpage} on the global window object */
 
             console.hlog(document.body.className);
             console.hlog(window.webpage.device.os); // operating system for the device e.g "Windows"
             console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina or "normal"
-            console.hlog(window.webpage.device.screen.dpi);
+            console.hlog(window.webpage.device.screen.dpi); // the dot per inch e.g.
+	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome"
             console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
 	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
 	
 	     console.log(navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
-	     console.log(navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro - 64 bits"
+	     console.log(navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
         </script>
 	 </body>
   </html>
@@ -99,8 +99,10 @@ After including the script to any page you choose (like above), it can be used o
     flex-direction:row-reverse;
  }
 
- body.yes-moz a[data-intro-text]:before{ /* Geckos -> Firefox, WebSpirit, IceDragon */
-    content:" This is a link to Facebook"; /* Accessibility for screen readers for visually-impared/non-sighted users */
+/* Accessibility for screen readers for visually-impared/non-sighted users */
+
+ body.yes-moz a.fb-social[data-intro-text]:before{ /* Geckos -> Firefox, WebSpirit, IceDragon */
+    content:" This is a link to Facebook"; 
     width: 1px;
     height:1px;
     overflow:hidden;
@@ -259,4 +261,4 @@ Please see the CONTRIBUTING.MD file for more details. Thank you.
 There are a couple of websites where **Browsengine** is already being used namely:
 
 - **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
-- **Stitch, Nigeria** - [Stitch Website/App](https://www.stitch.ng)
+- **Stitch, Nigeria** - [Stitch Website](https://www.stitch.ng)
