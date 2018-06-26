@@ -147,15 +147,15 @@ contentLoaded.apply(null, [window, function(){
 	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
 	osver_map = {
-		"Windows NT 5.1":"Windows XP",
-		"Windows NT 6.1":"Windows 7 - 32 bits",
+		"Windows NT 5.1":"Windows XP; Intel - 32 bits",
+		"Windows NT 6.1":"Windows 7; Intel - 32 bits",
 		"Windows NT 6.1; Win64; x64":"Windows 7; Intel - 64 bits",
-		"Windows NT 6.2":"Windows 8 - 32 bits",
+		"Windows NT 6.2":"Windows 8; Intel - 32 bits",
 		"Windows NT 6.2; Win64; x64":"Windows 8; Intel - 64 bits",
-		"Windows NT 10.0":"Windows 10",
+		"Windows NT 10.0":"Windows 10 Pro; Intel - 32 bits",
 		"Windows NT 10.0; Win64; x64":"Windows 10 Pro; Intel - 64 bits",
 		"Macintosh; Intel Mac OS X 10_13_2":"Macintosh OS X 10; Intel - 64 bits",
-		"Linux; Andriod 4.1.2; Nokia_XL Build/JZO54K":"Linux Android Jelly Bean; ARM - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
+		"Linux; Andriod 4.1.2; Nokia_XL Build/JZO54K":"Linux Android Jelly Bean {4.1}; ARM - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
 	},
 	    
 	OS = { //detecting OS data...
