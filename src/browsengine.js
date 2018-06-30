@@ -220,7 +220,7 @@ contentLoaded.apply(null, [window, function(){
 
 	 /* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
 	 
-     isGecko = (!n.vendor && ((!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (!(d.getBoxObjectFor) || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
+     isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (typeof w.mozPaintCount === 'number' || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
 
      /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
 
