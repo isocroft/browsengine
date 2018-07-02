@@ -155,6 +155,7 @@ contentLoaded.apply(null, [window, function(){
 		"Windows NT 10.0":"Windows 10 Pro; Intel - 32 bits",
 		"Windows NT 10.0; Win64; x64":"Windows 10 Pro; Intel - 64 bits",
 		"Macintosh; Intel Mac OS X 10_13_2":"Macintosh OS X 10; Intel - 64 bits",
+		"Linux; Andriod 6.0; Nexus 5 Build/MRA58N":"Linux Android Oreo {6.0}; ARM - 64 bits",
 		"Linux; Andriod 4.1.2; Nokia_XL Build/JZO54K":"Linux Android Jelly Bean {4.1}; ARM - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
 	},
 	    
