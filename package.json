@@ -1,0 +1,19 @@
+{
+  "name":"browsengine",
+  "version":"0.0.9",
+  "description":"",
+  "contributors":[{
+      "name":"@"
+  }],
+  "scripts":{
+      "test":""
+  },
+  "dependencies":{},
+  "browserslist":[
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies":{}
+}
