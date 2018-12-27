@@ -1,9 +1,10 @@
 {
   "name":"browsengine",
   "version":"0.0.9",
-  "description":"",
+  "description":"This is a small library for detecting different browser engines, their versions and the devices they run on as is used all across the web",
+  "author":"Ifeora Okechukwu <https://twitter.com/isocroft>",
   "contributors":[{
-      "name":"@"
+      "name":"@puran2"
   }],
   "scripts":{
       "test":""
