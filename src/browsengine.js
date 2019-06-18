@@ -142,7 +142,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	body, Device, isGecko = false, isEdgeHTML = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isKDE = false, nk = ua.toLowerCase(),
 	
-	_engineFragment = ((w.chrome || d.readyState) && 'clientInformation' in w), z = (('orientation' in w) && !('ondeviceorientation' in w)),
+	_engineFragment = ((w.chrome || d.readyState) && ('clientInformation' in w)), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
 	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
@@ -237,7 +237,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ('Credential' in w) && (has_pcredentials_iconurl());	
+     isBlink = _engineFragment && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function') && (has_pcredentials_iconurl());	
 	
 	/* setup info object - {webpage} */
 
@@ -533,13 +533,13 @@ contentLoaded.apply(null, [window, function(){
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
 
-	          isChrWebkit = ((d.webkitHidden == false || d.webkitHidden === undefined) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && ((n.vendor.indexOf("Google Inc") != -1) || !w.showModalDialog));
+	          isChrWebkit = ((d.webkitHidden == false || d.webkitHidden === undefined) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && ((n.vendor.indexOf("Google Inc.") != -1) || !w.showModalDialog));
 		
-		      isSafWebkit = ((navigator.vendor.indexOf("Apple Computer") != -1) && (/Gecko/g.test(ua) || !n.taintEnabled) && 'webkitDashboardRegion' in body.style);
+		      isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") != -1) && (/constructor/i.test(w.HTMLElement)) && (/Gecko/g.test(ua) || !n.taintEnabled) && ('webkitDashboardRegion' in body.style));
 		
-		      isKDE = ((navigator.vendor.indexOf("KDE")) != -1 && /Konqueror/g.test(ua) && ('KhtmlUserInput' in body.style));
+		      isKDE = ((n.vendor.indexOf("KDE")) != -1 && /Konqueror/g.test(ua) && ('KhtmlUserInput' in body.style));
 			 
-			  isSilk = ((navigator.vendor.indexOf("Amazon")) != -1 && /Silk/g.test(ua));
+			  isSilk = ((n.vendor.indexOf("Amazon")) != -1 && /Silk/g.test(ua));
 			 
 			  isYandex = (/YAbrowser/ig.test(ua));
 		
