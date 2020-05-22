@@ -140,7 +140,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	var w=this, d=w.document, rt = d.documentElement,  dd="documentMode", ci = (w.clientInformation || {}), n= w.navigator, eid = (ci.productSub || n.productSub || (w.opera && w.opera.buildNumber())), ua = (ci.userAgent || n.userAgent), apn = n.appName, apv = (ci.appVersion || n.appVersion), /* global objects... */
 	
-	body, Device, isGecko = false, isEdgeHTML = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isKDE = false, nk = ua.toLowerCase(),
+	body, Device, isGecko = false, isEdgeHTML = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isEdgeChromium = false, isKDE = false, nk = ua.toLowerCase(),
 	
 	_engineFragment = ((w.chrome || d.readyState) && ('clientInformation' in w)), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
@@ -186,33 +186,33 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isOperaMini:function(bd){ // available on Android & IOS & Windows Mobile OSes only
 		
-		    return  (to_string(window.operamini) == '[object operamini]' && !!(bd.className += " operamini")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamini")));
+		    return  (to_string(w.operamini) == '[object operamini]' && !!(bd.className += " operamini")) || ((ua.indexOf("Opera Mini") > 0) || (bd && ('OMiniFold' in bd.style) && !!(bd.className += " operamini")));
 			
 		},
 		isOperaMobile:function(bd){ // available on Android & Windows Mobile OSes only
 		
-		    return (typeof window.operamini === undefined) && _engineFragment && (OS.isAndroid(bd) || OS.isWinMobile(bd)) && (n.vendor === 'Opera Software ASA') && !!(bd && (bd.className += " operamobile"));
+		    return (typeof w.operamini === undefined && (OS.isAndroid(bd) || OS.isWinMobile(bd)) && (n.vendor === 'Opera Software ASA' || typeof n.share === 'function') && _engineFragment && !!(bd && (bd.className += " operamobile")));
 		},
 		isIOS:function(bd){ 
 		
-		    return !(OS.isWinMobile(bd)) && (!!n.platform && !window.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
+		    	return !(OS.isWinMobile(bd)) && (!!n.platform && !w.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
 
 		},
     		isAndroid:function(bd){
 		
-		  return !(OS.isWinMobile(bd)) && (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
+		  	return !(OS.isWinMobile(bd)) && (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
 		  
 		},
     		isBB:function(bd){
 		
 			// @See: http://ryanmorr.com/the-state-of-browser-detection/
-			return ('blackberry' in window) && (ua.search(/BlackBerry|\bBB\d+/) > -1);
+			return ('blackberry' in w) && (ua.search(/BlackBerry|\bBB\d+/) > -1);
 		   
 		},
 		isWebOS:function(bd){
 		   
 		   // @See: http://ryanmorr.com/the-state-of-browser-detection/
-		   return ('PalmSystem' in window) && (ua.search(/(Web|HPW)OS/) > -1);
+		   return ('PalmSystem' in w) && (ua.search(/(Web|HPW)OS/) > -1);
 		   
 		}	
 	},
@@ -221,23 +221,23 @@ contentLoaded.apply(null, [window, function(){
 
 	 /* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
 	 
-     isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (typeof w.mozPaintCount === 'number' || ('registerContentHandler' in n)) && /Gecko/g.test(ua)), 
+     isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (typeof w.mozPaintCount === 'number' || ('registerContentHandler' in n)) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
 
      /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
 
-     isPresto = (/Presto/g.test(ua) && ('defaultStatus' in w) && (('OLink' in body.style) || ('oMatchesSelector' in body) || (to_string(w.opera) == "[object opera]") || OS.isOperaMobile(body)) && 'navigationMode' in w.history),
+     isPresto = (/Presto/g.test(ua) && ((to_string(w.opera) == "[object opera]"))) && 'navigationMode' in w.history),
 
      /* Trident is the rendering engine used by older versions of IE */
 
-     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && ((w.toStaticHTML && ('all' in d)) || _engineFragment) && ('behavior' in body.style)),
+     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && ((w.toStaticHTML && ('all' in d)) || _engineFragment)) // && ('behavior' in body.style),
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
 
-     isEdgeHTML = ('crypto' in w) && ('all' in d) && _engineFragment && /Edge/g.test(ua) && ('msCredentials' in w) && (w.chrome.runtime === undefined) && !isTrident,
+     isEdgeHTML = _engineFragment && (typeof w.msWriteProfilerMark === 'function' || typeof n.msManipulationViewsEnabled === 'boolean') && ('msCredentials' in w || !!w.StyleMedia) && !isTrident,
 
     /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
 
-     isBlink = _engineFragment && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function') && (has_pcredentials_iconurl());	
+     isBlink = _engineFragment && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function') && (has_pcredentials_iconurl());	
 	
 	/* setup info object - {webpage} */
 
@@ -533,15 +533,17 @@ contentLoaded.apply(null, [window, function(){
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
 
-	          isChrWebkit = ((d.webkitHidden == false || d.webkitHidden === undefined) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && ((n.vendor.indexOf("Google Inc.") != -1) || !w.showModalDialog));
+	          isChrWebkit = ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime || /(Chrome|Crios|Crmo|CrOS)/g.test(ua)) && ((n.vendor.indexOf("Google Inc.") !== -1) || !w.showModalDialog));
 		
-		      isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") != -1) && (/constructor/i.test(w.HTMLElement)) && (/Gecko/g.test(ua) || !n.taintEnabled) && ('webkitDashboardRegion' in body.style));
-		
-		      isKDE = ((n.vendor.indexOf("KDE")) != -1 && /Konqueror/g.test(ua) && ('KhtmlUserInput' in body.style));
+		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))) && (/Gecko/g.test(ua) || !n.taintEnabled)); // && ('webkitDashboardRegion' in body.style);
+										       
+		  isEdgeChromium = !isChrWebkit && isEdgeHTML && / Edg[Ae]?\/\d{2}\./ig.test(ua) && (typeof w.chrome.runtime === 'undefined') && n.vendor === ""
+										       
+		  isKDE = ((n.vendor.indexOf("KDE")) !== -1 && /Konqueror/g.test(ua)) // && ('KhtmlUserInput' in body.style);
 			 
-			  isSilk = ((n.vendor.indexOf("Amazon")) != -1 && /Silk/g.test(ua));
+		  isSilk = ((n.vendor.indexOf("Amazon")) != -1 && /Silk/ig.test(ua));
 			 
-			  isYandex = (/YAbrowser/ig.test(ua));
+		  isYandex = (/YAbrowser/ig.test(ua));
 		
 		}
    
@@ -769,18 +771,18 @@ contentLoaded.apply(null, [window, function(){
         if(d[dd] && d[dd] === ieActual  
         	&& (("msInterpolationMode" in body.style) 
         			|| ('msLinearGradient' in body.style) 
-        				|| (!!window.MSInputMethodContext))){ // IE (7-11)
+        				|| (!!w.MSInputMethodContext))){ // IE (7-11)
 		     
 		     if(body.className.indexOf(ieTag.substring(1)) == -1){    
 
-                     body.className += ieTag + " forward-ie"; 
-			 }	
+                     	body.className += ieTag + " forward-ie"; 
+		     }	
 
 		}else{
 		
 		     /* Here we are detecting Internet Explorer 4 - 6 only */
 
-             body.className += ieTag;      		 
+             	     body.className += ieTag;      		 
 		}
 
 		body.className += " trident";
@@ -795,11 +797,11 @@ contentLoaded.apply(null, [window, function(){
 
 		if(browserName == "edge" && ('msTextSizeAdjust' in body.style)){
 
-		    body.className += " microsoftedge like-gecko like-khtml";
+		    body.className += " microsoftedge like-gecko like-khtml " + (isEdgeChromium ? "chromium-edge" : "non-chromium-edge");
 
 		    w.webpage.engine.edgehtml = true;
 			
-			w.webpage.device.browser_build = 'edgehtml-edge';
+		    w.webpage.device.browser_build = (isEdgeChromium ? 'edgehtml-chromium' : 'edgehtml-edge');
 
 		} 
 	}
@@ -1008,7 +1010,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Here we are detecting Opera from version 15.0+ */
 
-    else if(/Blink/g.test(ua) || isBlink && !isPresto && (browserName == 'opr' && n.vendor === 'Google Inc.')){
+    else if(/Blink/g.test(ua) || isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && browserName == 'opr' && n.vendor === 'Google Inc.')){
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
