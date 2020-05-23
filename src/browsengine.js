@@ -237,7 +237,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chrome and other browsers like the newer version of Edge & Opera */
 
-     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function'),
+     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function' || (typeof w['Credential'] === 'function')),
 
     /* Blink rendering engine for specific distributions of Chromium specifically newer versions of Chrome */
 
