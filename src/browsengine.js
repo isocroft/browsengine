@@ -221,7 +221,7 @@ contentLoaded.apply(null, [window, function(){
 
 	/* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
 	 
-     isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (typeof w.mozPaintCount === 'number' || ('registerContentHandler' in n)) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
+     isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof w.mozInnerScreenX == 'number') && ('registerContentHandler' in n || 'registerProtocolHandler' in n) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
 
      /* Presto is the only rendering engine used by older Opeara browsers, so we include the presence of {opera} object as a factor */
 
@@ -282,7 +282,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		onDesktop:function(){
 
-			return (((~~pixelDensity) == 1) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
+			return (((~~pixelDensity) <= 1) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
 		},
 		onTV:function(){
 
@@ -537,7 +537,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
 
-	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1) && !w.CSS);
+	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
 		
 		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))))&& (/Gecko/g.test(ua) || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
 										       
@@ -552,7 +552,7 @@ contentLoaded.apply(null, [window, function(){
 	     }
 	
 	     w.isSafariAndIOS12OrLater = function(){
-		return isSafWebkit && (typeof n.share === 'function' && w['IntersectionObserver'] === 'function');
+		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function');
              }
 
              w.isOpera15OrLater = function(){
@@ -565,11 +565,11 @@ contentLoaded.apply(null, [window, function(){
 	
 	     w.isChrome40OrLater = function(){
 		var i = d.createElement('input');
-   		return isChrWebkit && isChromiumBlink && i.reportValidity === 'function';
+   		return isChrWebkit && isChromiumBlink && (typeof i['reportValidity'] === 'function');
  	     }
 
 	     w.isFirefox44OrLater = function(){
-		return isGecko && typeof w.PushManager === 'function';
+		return isGecko && (typeof w.PushManager === 'function');
 	     }
    
    		/* retrieve browser build name (if any) */
@@ -578,11 +578,7 @@ contentLoaded.apply(null, [window, function(){
 	
 		/* take out minor version number and/or patch version number (if any) */
 
-	    	browserVersion = parseInt( j[2] || "0" ).toPrecision(2);  
-		
-		/* Finally, clean it up */
-
-		browserVersion = parseFloat(browserVersion);
+	    	browserVersion = parseFloat( j[2] || "0" );  
 	
 	
 	    if(browserVersion  <= 9.0 && browserName == "msie" && isTrident){
@@ -902,7 +898,7 @@ contentLoaded.apply(null, [window, function(){
 
       /* Here we are detecting Chrome 1.0+, UC Browser from version 2.0+ and 5.0+ respectively */
 
-     else if (isChrWebkit && (w["webkitURL"]) == 'function')) {
+     else if (isChrWebkit && (typeof w["webkitURL"] == 'function')) {
 
 	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
           switch(browserVersion){
@@ -973,7 +969,7 @@ contentLoaded.apply(null, [window, function(){
 					  
 				}
 
-				if(ua.indexOf('nokia_xl')) {  
+				if(ua.indexOf('nokia_xl') > -1) {  
 
 			     	  		body.className += " nokia_xl";  
 
@@ -1003,7 +999,7 @@ contentLoaded.apply(null, [window, function(){
 			     	  }
 
 
-			     	  if(ua.indexOf('nokia_xl')) {  
+			     	  if(ua.indexOf('nokia_xl') > -1) {  
 
 			     	  		body.className += " nokia_xl";  
 
@@ -1033,7 +1029,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	/* Here we are detecting Safari from version 2.0+ */
 	
-	else if(((typeof(window.webkitURL || window.URL) == 'undefined' && ua.indexOf('AppleWebkit') != -1)) || isSafWebkit){
+	else if((ua.indexOf('AppleWebkit') != -1) || isSafWebkit){
 	  
 	          	  if (body.className.indexOf("yes-webkit") == -1){
 
