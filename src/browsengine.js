@@ -535,9 +535,9 @@ contentLoaded.apply(null, [window, function(){
     } 	
 	
 	
-	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
+	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with old IE/Opera and others...
 
-	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
+	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime || !!w.crypto) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
 		
 		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))))&& (/Gecko/g.test(ua) || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
 										       
