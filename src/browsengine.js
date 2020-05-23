@@ -1,19 +1,19 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.0.9
+ * @version: 0.1.0
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 12/07/2018
+ * @updated: 23/05/2020
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
- * All Rights Reserved. Copyright (c) 2014 - 2018
+ * All Rights Reserved. Copyright (c) 2014 - 2020
  */
  
  
 
-/* @TODO:
+/* @TODO: (next version)
 
  	BROWSENGINE FIX - Nexus Tablet { width:601px ,  pixelDensity:1.332 }
 
@@ -81,7 +81,7 @@ function polyfill_oscpu_lang(eng, av){
 	}
 		
 	if (window.navigator.language === undefined) {  // in Opera, the language, browserLanguage and userLanguage properties are equivalent
-		window.navigator.language = window.navigator.browserLanguage || window.navigator.userLanguage;
+		window.navigator.language = window.navigator.systemLanguage || window.navigator.userLanguage || window.navigator.browserLanguage;
 	}
 }
 	
@@ -140,11 +140,11 @@ contentLoaded.apply(null, [window, function(){
 	
 	var w=this, d=w.document, rt = d.documentElement,  dd="documentMode", ci = (w.clientInformation || {}), n= w.navigator, eid = (ci.productSub || n.productSub || (w.opera && w.opera.buildNumber())), ua = (ci.userAgent || n.userAgent), apn = n.appName, apv = (ci.appVersion || n.appVersion), /* global objects... */
 	
-	body, Device, isGecko = false, isEdgeHTML = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isEdgeChromium = false, isKDE = false, nk = ua.toLowerCase(),
+	body, Device, isGecko = false, isEdgeHTML = false, isChromiumBlink = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isEdgeChromium = false, isKDE = false, nk = ua.toLowerCase(),
 	
-	_engineFragment = ((w.chrome || d.readyState) && ('clientInformation' in w)), z = (('orientation' in w) && !('ondeviceorientation' in w)),
+	_engineFragment = ((w.chrome || ('onafterprint' in w) || d.readyState) && ('clientInformation' in w)), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
-	j = /(?:chrome[^ ]+:)? (edge)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
+	j = /(?:chrome[^ ]+:)? (edg(?:[ea]|ios)?)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
 	osver_map = {
 		"Windows NT 5.1":"Windows XP; Intel - 32 bits",
@@ -219,25 +219,29 @@ contentLoaded.apply(null, [window, function(){
 
 	 body = d.body || d.getElementsByTagName('body')[0],
 
-	 /* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
+	/* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
 	 
      isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof(w.mozInnerScreenX) == 'number') && (typeof w.mozPaintCount === 'number' || ('registerContentHandler' in n)) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
 
-     /* Presto is the only rendering engine used by older Opeara browsers,  so we include the presence of {opera} object as a factor */
+     /* Presto is the only rendering engine used by older Opeara browsers, so we include the presence of {opera} object as a factor */
 
      isPresto = (/Presto/g.test(ua) && ((to_string(w.opera) == "[object opera]"))) && 'navigationMode' in w.history),
 
-     /* Trident is the rendering engine used by older versions of IE */
+     /* Trident is the rendering engine used by older versions of IE - 9 - 11 */
 
-     isTrident = ((/*@cc_on!@*/false || d.uniqueID || d.createEventObject) && /Trident/g.test(ua) && ((w.toStaticHTML && ('all' in d)) || _engineFragment)) // && ('behavior' in body.style),
+     isTrident = _engineFragment && ((/*@cc_on!@*/false || d.createEventObject) && (/Trident/g.test(ua) || typeof n.cpuClass === 'string') && (w.toStaticHTML && ('all' in d))), // && ('behavior' in body.style),
 
-    /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine */
+    /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine (specifically from IE 11 ) */
 
-     isEdgeHTML = _engineFragment && (typeof w.msWriteProfilerMark === 'function' || typeof n.msManipulationViewsEnabled === 'boolean') && ('msCredentials' in w || !!w.StyleMedia) && !isTrident,
+     isEdgeHTML = _engineFragment && (typeof w.msWriteProfilerMark === 'function' || typeof n.msManipulationViewsEnabled === 'boolean') && ('msCredentials' in w) && n.appName === "Netscape" && !isTrident,
 
-    /* Blink rendering engine is the new successor to Webkit for Chromium and Chrome browsers */
+    /* Blink rendering engine is the new successor to Webkit for Chrome and other browsers like the newer version of Edge & Opera */
 
-     isBlink = _engineFragment && ((!!w.Intl) && !!(w.Intl.v8BreakIterator)) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function') && (has_pcredentials_iconurl());	
+     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function')),
+
+    /* Blink rendering engine for specific distributions of Chromium specifically newer versions of Chrome */
+
+     isChromiumBlink = isBlink && !!(w.Intl.v8BreakIterator) && (has_pcredentials_iconurl());
 	
 	/* setup info object - {webpage} */
 
@@ -533,13 +537,13 @@ contentLoaded.apply(null, [window, function(){
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
 
-	          isChrWebkit = ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime || /(Chrome|Crios|Crmo|CrOS)/g.test(ua)) && ((n.vendor.indexOf("Google Inc.") !== -1) || !w.showModalDialog));
+	          isChrWebkit = ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1) && !w.CSS);
 		
-		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))) && (/Gecko/g.test(ua) || !n.taintEnabled)); // && ('webkitDashboardRegion' in body.style);
+		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))))&& (/Gecko/g.test(ua) || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
 										       
-		  isEdgeChromium = !isChrWebkit && isEdgeHTML && / Edg[Ae]?\/\d{2}\./ig.test(ua) && (typeof w.chrome.runtime === 'undefined') && n.vendor === ""
+		  isEdgeChromium = !isChrWebkit && isBlink && n.vendor === "" && (!!w.StyleMedia || !!n.presentation)
 										       
-		  isKDE = ((n.vendor.indexOf("KDE")) !== -1 && /Konqueror/g.test(ua)) // && ('KhtmlUserInput' in body.style);
+		  isKDE = ((n.vendor.indexOf("KDE")) !== -1 && /Konqueror/g.test(ua)) && ('KhtmlUserInput' in body.style);
 			 
 		  isSilk = ((n.vendor.indexOf("Amazon")) != -1 && /Silk/ig.test(ua));
 			 
@@ -795,19 +799,27 @@ contentLoaded.apply(null, [window, function(){
 
 	else if(isEdgeHTML){	
 
-		if(browserName == "edge" && ('msTextSizeAdjust' in body.style)){
-
-		    body.className += " microsoftedge like-gecko like-khtml " + (isEdgeChromium ? "chromium-edge" : "non-chromium-edge");
+		if(browserName == "edge" && ('msCredentials' in w)){
+		
+		    body.className += " microsoftedge like-gecko like-khtml non-chromium-edge";
 
 		    w.webpage.engine.edgehtml = true;
 			
-		    w.webpage.device.browser_build = (isEdgeChromium ? 'edgehtml-chromium' : 'edgehtml-edge');
+		    w.webpage.device.browser_build = 'edgehtml-edge';
 
 		} 
-	}
+	}else if(isEdgeChromium){
 
-	
-    else if (isGecko) {
+		if((browserName == "edg" || browserName == "edga" || browserName == "edgios") && ('onwebkitfullscreenchange' in d)){ 
+
+			body.className += " microsoftedge like-gecko like-khtml chromium-edge";
+
+			w.webpage.engine.blink = true;
+
+			w.webpage.device.browser_build = 'blink-edge';
+		}
+		
+}else if (isGecko) {
       
 	    // Here we are detecting Firefox, IceWeasel & SeaMonkey from version 3.0+
 			
@@ -867,19 +879,70 @@ contentLoaded.apply(null, [window, function(){
 
     }
 
-      /* Here we are detecting Chrome, UC Browser from version 2.0+ and 5.0+ respectively */
+      /* Here we are detecting Chrome 1.0+, UC Browser from version 2.0+ and 5.0+ respectively */
 
      else if ((typeof(window["URL"] || window["webkitURL"]) == 'function') || isChrWebkit) {
 
-          if(isBlink){
+	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
+          switch(browserVersion){
+
+		  case 1.0:
+			  
+		  	w.webpage.engine.version = '528.00';
+                  break;
+		  case 2.0:
+			  
+		  	w.webpage.engine.version = '530.00';
+                  break;
+		  case 3.0:
+			
+		  	w.webpage.engine.version = '532.00';
+                  break;
+		  case 4.0:
+			 
+		  	w.webpage.engine.version = '532.50';
+                  break;
+		  case 4.1:
+			  
+		  	w.webpage.engine.version = '532.50';
+		  break;
+		  case 5.0:
+			  
+		  	w.webpage.engine.version = '533.00';
+		  break;
+		  case 6.0:
+			  
+		  	w.webpage.engine.version = '534.30';
+		  break;
+		  case 7.0:
+			  
+		  	w.webpage.engine.version = '534.70';
+		  break;
+		  case 8.0:
+			
+		  	w.webpage.engine.version = '534.10';
+		  break;
+		  case 9.0:
+			
+		  	w.webpage.engine.version = '534.13';
+		  break;
+		  case 10.0:
+			  
+		  	w.webpage.engine.version = '534.16';
+		 break;
+		  case 11.0:
+			  
+		  	w.webpage.engine.version = '534.24';
+                  break;
+	  }
+
+          if(isChromiumBlink){
 
           		 if (body.className.indexOf("yes-blink") == -1){
 
                        		body.className += " yes-blink chrome";
 
           		 }
-		  
-		  	w.webpage.engine.version = '537.36';
 		  
 		    	/* Detecting Vivaldi Browser for Desktop (Blink Engine) ... */
 		  
@@ -966,35 +1029,39 @@ contentLoaded.apply(null, [window, function(){
 	/* Here we are detecting Opera from version 7.0 - 14.0 */
 
 	/* 
-		Opera versions 4.0 - 6.0 were supported by the Elektra engine
+		Opera versions 3.0 - 6.0 were supported by the Elektra engine ( pre-Presto )
 		[which is now seriously outdated.. like e don teey!!] 
 	 */
 
-    else  if (('OBackgroundSize' in body["style"] && 'attachEvent' in d) || (isPresto && browserName == 'opera')){
+    else  if ((('supportsCSS' in w) || 'attachEvent' in d) && (isPresto && browserName == 'opera')){ 
 
     	   var oprVersion = parseInt(w.opera.version());
 
+	   // See: https://help.opera.com/en/operas-archived-history/
     	   switch(oprVersion){
     	   	case 7:
-    	   		window.webpage.engine.version = "2.6";
+    	   		window.webpage.engine.version = "1.0";
     	   	break;
 			case 8:
-				window.webpage.engine.version = "2.7";
+				window.webpage.engine.version = "1.0";
 			break;
 			case 9:
-				window.webpage.engine.version = "2.8";
+				window.webpage.engine.version = "2.0";
 			break;
 			case 10:
-				window.webpage.engine.version = "2.9";
+				window.webpage.engine.version = "2.2";
 			break;
 			case 11:
-				window.webpage.engine.version = "2.10";
+				window.webpage.engine.version = "2.7";
 			break;
 			case 12:
-				window.webpage.engine.version = "2.11";
+				window.webpage.engine.version = "2.9";
 			break;
 			case 13:
-				window.webpage.engine.version = "2.12";
+				window.webpage.engine.version = "2.13";
+			break;
+		   	case 14:
+			   	window.webpage.engine.version = "2.15";
 			break;
 		}	 
 
@@ -1009,8 +1076,9 @@ contentLoaded.apply(null, [window, function(){
     }
 
     /* Here we are detecting Opera from version 15.0+ */
+    /* PS: Note that Opera 15.0 was based on Webkit but Opera 16.0+ was based on blink */
 
-    else if(/Blink/g.test(ua) || isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && browserName == 'opr' && n.vendor === 'Google Inc.')){
+    else if(isBlink && !isPresto && ((!!w.opr && !!w.opr.addons && !!w.CSS.supports) && browserName == 'opr' && n.vendor === 'Google Inc.')){ 
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
@@ -1020,7 +1088,12 @@ contentLoaded.apply(null, [window, function(){
 
           w.webpage.engine.blink = true;
 	    
-	   w.webpage.engine.version = "537.36";
+	   switch(parseInt(browserVersion)){
+		   case 15:
+			   
+	   	w.webpage.engine.version = "537.36";
+			   break;
+	   }
 	    
 	  w.webpage.device.browser_build = 'blink-opera';
 
