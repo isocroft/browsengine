@@ -827,7 +827,7 @@ contentLoaded.apply(null, [window, function(){
 		} 
 	}else if(isEdgeChromium){
 
-		if((browserName == "edg" || browserName == "edga" || browserName == "edgios") && ('onwebkitfullscreenchange' in d)){ 
+		if((browserName == "edg" || browserName == "edga" || browserName == "edgios" || browserName == "edge") && ('onwebkitfullscreenchange' in d)){ 
 
 			body.className += " microsoftedge like-gecko like-khtml chromium-edge";
 
