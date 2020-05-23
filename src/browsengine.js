@@ -191,7 +191,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isOperaMobile:function(bd){ // available on Android & Windows Mobile OSes only
 		
-		    return (typeof w.operamini === undefined && (OS.isAndroid(bd) || OS.isWinMobile(bd)) && (n.vendor === 'Opera Software ASA' || typeof n.share === 'function') && _engineFragment && !!(bd && (bd.className += " operamobile")));
+		    return (typeof w.operamini === undefined) && (OS.isAndroid(bd) || OS.isWinMobile(bd)) && (n.vendor === 'Opera Software ASA' || typeof n.share === 'function') && _engineFragment && !!(bd && (bd.className += " operamobile"));
 		},
 		isIOS:function(bd){ 
 		
@@ -200,7 +200,7 @@ contentLoaded.apply(null, [window, function(){
 		},
     		isAndroid:function(bd){
 		
-		  	return !(OS.isWinMobile(bd)) && (this.isLinux()) && (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0 && ua.search(/like/ig) == -1);
+		  	return !(OS.isWinMobile(bd)) && (this.isLinux()) && ((ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0) && (ua.search(/like/ig) == -1));
 		  
 		},
     		isBB:function(bd){
@@ -212,7 +212,7 @@ contentLoaded.apply(null, [window, function(){
 		isWebOS:function(bd){
 		   
 		   // @See: http://ryanmorr.com/the-state-of-browser-detection/
-		   return ('PalmSystem' in w) && (ua.search(/(Web|HPW)OS/) > -1);
+		   return (('PalmSystem' in w) && (ua.search(/(Web|HPW)OS/) > -1));
 		   
 		}	
 	},
@@ -225,7 +225,7 @@ contentLoaded.apply(null, [window, function(){
 
      /* Presto is the only rendering engine used by older Opeara browsers, so we include the presence of {opera} object as a factor */
 
-     isPresto = (/Presto/g.test(ua) && ((to_string(w.opera) == "[object opera]"))) && 'navigationMode' in w.history),
+     isPresto = (/Presto/g.test(ua) && ((to_string(w.opera) == "[object opera]"))) && ('navigationMode' in w.history),
 
      /* Trident is the rendering engine used by older versions of IE - 9 - 11 */
 
@@ -237,7 +237,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chrome and other browsers like the newer version of Edge & Opera */
 
-     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function')),
+     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function') && (typeof w['Credential'] === 'function'),
 
     /* Blink rendering engine for specific distributions of Chromium specifically newer versions of Chrome */
 
@@ -537,7 +537,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with IE/Opera and others...
 
-	          isChrWebkit = ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1) && !w.CSS);
+	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1) && !w.CSS);
 		
 		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))))&& (/Gecko/g.test(ua) || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
 										       
@@ -549,7 +549,28 @@ contentLoaded.apply(null, [window, function(){
 			 
 		  isYandex = (/YAbrowser/ig.test(ua));
 		
-		}
+	     }
+	
+	     w.isSafariAndIOS12OrLater = function(){
+		return isSafWebkit && (typeof n.share === 'function' && w['IntersectionObserver'] === 'function');
+             }
+
+             w.isOpera15OrLater = function(){
+		return isBlink && !isPresto && (!!w.opr && !!w.opr.addons && typeof w.CSS.supports === 'function'); 
+  	     }
+
+	     w.isEdge17OrLater = function(){
+		return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function');
+	     }
+	
+	     w.isChrome40OrLater = function(){
+		var i = d.createElement('input');
+   		return isChrWebkit && isChromiumBlink && i.reportValidity === 'function';
+ 	     }
+
+	     w.isFirefox44OrLater = function(){
+		return isGecko && typeof w.PushManager === 'function';
+	     }
    
    		/* retrieve browser build name (if any) */
 
@@ -819,7 +840,7 @@ contentLoaded.apply(null, [window, function(){
 			w.webpage.device.browser_build = 'blink-edge';
 		}
 		
-}else if (isGecko) {
+      }else if (isGecko) {
       
 	    // Here we are detecting Firefox, IceWeasel & SeaMonkey from version 3.0+
 			
@@ -881,7 +902,7 @@ contentLoaded.apply(null, [window, function(){
 
       /* Here we are detecting Chrome 1.0+, UC Browser from version 2.0+ and 5.0+ respectively */
 
-     else if ((typeof(window["URL"] || window["webkitURL"]) == 'function') || isChrWebkit) {
+     else if (isChrWebkit && (w["webkitURL"]) == 'function')) {
 
 	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
           switch(browserVersion){
@@ -1076,9 +1097,9 @@ contentLoaded.apply(null, [window, function(){
     }
 
     /* Here we are detecting Opera from version 15.0+ */
-    /* PS: Note that Opera 15.0 was based on Webkit but Opera 16.0+ was based on blink */
+    /* PS: Note that Opera 15.0 (beta) is based on Webkit but Opera 15.0+ was based on Blink after Google updated their annoucements in 2013 */
 
-    else if(isBlink && !isPresto && ((!!w.opr && !!w.opr.addons && !!w.CSS.supports) && browserName == 'opr' && n.vendor === 'Google Inc.')){ 
+    else if(w.isOpera15OrLater() && (browserName == 'opr' && n.vendor === 'Google Inc.')){ 
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
@@ -1087,12 +1108,45 @@ contentLoaded.apply(null, [window, function(){
           }
 
           w.webpage.engine.blink = true;
+
+	  w.webpage.engine.x_version = "537.36";
+	    
+	    // See: https://help.opera.com/en/opera-version-history/
 	    
 	   switch(parseInt(browserVersion)){
-		   case 15:
-			   
-	   	w.webpage.engine.version = "537.36";
-			   break;
+		   case 15:  
+ 			w.webpage.engine.version = '28'
+		   break;
+		   case 16:
+			w.webpage.engine.version = '29'
+	   	   break;
+		   case 17:
+			w.webpage.engine.version = '30'
+		   break;
+		   case 18:
+			   w.webpage.engine.version = '31'
+		   break;
+		   case 19:
+			   w.webpage.engine.version = '32'
+		   break;
+		   case 20:
+			   w.webpage.engine.version = '33'
+		   break;
+		   case 21:
+			   w.webpage.engine.version = '34'
+		   break;
+		   case 22:
+			   w.webpage.engine.version = '35'
+		   break;
+		   case 23:
+			   w.webpage.engine.version = '36'
+		   break;
+		   case 24:
+			   w.webpage.engine.version = '37'
+		   break;
+		   case 25:
+			   w.webpage.engine.version = '38'
+		   break;
 	   }
 	    
 	  w.webpage.device.browser_build = 'blink-opera';
