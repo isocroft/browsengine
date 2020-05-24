@@ -69,14 +69,14 @@ function polyfill_oscpu_lang(eng, av){
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
 		if(eng.webkit || eng.blink || eng.edgehtml){
    			var e_index = av.indexOf(')');
-			window.navigator.oscpu = av.substring(b_index + 1, e_index);
+			window.navigator.oscpu = (av.substring(b_index + 1, e_index)).replace('(', '').trim();
 		}else if(eng.trident){
 			splited = av.split(';');
 			window.navigator.oscpu = splited[3];
 		}else if(!eng.gecko){
-			 //presto -> old Opera
-			 splited = av.split(';');
-			 window.navigator.oscpu = (splited[0] || "").substring(b_index);
+			//presto -> old Opera
+			splited = av.split(';');
+			window.navigator.oscpu = (splited[0] || "").substring(b_index);
 		}
 	}
 		
@@ -225,11 +225,11 @@ contentLoaded.apply(null, [window, function(){
 
      /* Presto is the only rendering engine used by older Opeara browsers, so we include the presence of {opera} object as a factor */
 
-     isPresto = (/Presto/g.test(ua) && ((to_string(w.opera) == "[object opera]"))) && ('navigationMode' in w.history),
+     isPresto = ((/Presto/g.test(ua) || n.appName === 'Opera') && ((to_string(w.opera) == "[object opera]"))) && ('navigationMode' in w.history),
 
      /* Trident is the rendering engine used by older versions of IE - 9 - 11 */
 
-     isTrident = _engineFragment && ((/*@cc_on!@*/false || d.createEventObject) && (/Trident/g.test(ua) || typeof n.cpuClass === 'string') && (w.toStaticHTML && ('all' in d))), // && ('behavior' in body.style),
+     isTrident = _engineFragment && ((/*@cc_on!@*/false || d.createEventObject || ('webdriver' in n)) && (/Trident/g.test(ua) || typeof n.cpuClass === 'string') && (!!w.toStaticHTML)), // && ('behavior' in body.style),
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine (specifically from IE 11 ) */
 
