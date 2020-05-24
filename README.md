@@ -4,7 +4,7 @@ This is a small library for detecting different browser engines, their versions 
 
 ## Preamble
 
-The JavaScript community has and will always deal with _browser quirks_ (mostly for CSS and JavaScript). These are the many anomalies that continue and will continue give rise to cross-browser issues (not because the specs from IEEE or W3C don't spell things out well). It's always going to be with us for a long time to come. Why ? because software (like browsers) is built by humans for humans and humans make mistakes and wrong judgement. Some quirks are usually atrributed to one browser at a given version (or a range of versions). Others are attributed to more than one. _Browser Sniffing_ using the **User-Agent** string (`navigator.userAgent`) used to be the way to go in the past to shim or workaround these anomalies. Browser sniffing had issues because the Javascript logic that was written for one version of a given browser could fail when a new version of that same browser was released. In recent times, we now have **Feature Detection** which is more (infact 95%) reliable than **Browser Sniffing**. That's why Javascript libraries like the famous [**Modernizr**](https://github.com/Modernizr/Modernizr) is used heavily on websites and web applications today.
+The JavaScript community has and will always deal with _browser quirks_ (mostly for CSS and JavaScript). These are the many anomalies that continue and will continue give rise to cross-browser issues (not because the specs from IEEE or W3C don't spell things out well). It's always going to be with us for a long time to come. Why ? because software (like browsers) is built by humans for humans and humans make mistakes and wrong judgement. Some quirks are usually atrributed to one browser at a given version (or a range of versions). Others are attributed to more than one. _Browser Sniffing_ using the **User-Agent** string (`navigator.userAgent`) used to be the way to go in the past to shim or workaround these anomalies. Browser sniffing had issues because the Javascript logic that was written for one version of a given browser could fail when a new version of that same browser was released. Also _Browser Sniffing_ is mostly not reliable. In recent times, we now have **Feature Detection** which is more (infact 95%) reliable than **Browser Sniffing**. That's why Javascript libraries like the famous [**Modernizr**](https://github.com/Modernizr/Modernizr) is used heavily on websites and web applications today.
 
 ## The Problem
 
@@ -55,9 +55,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             
                 // the console object is never available when dev tools is not open
                 if(!window.console && window.webpage.old.ie)){
-                    window.console = {
-                        
-                    }
+                    window.console = {}
                 };
                     
 		window.console.hlog = function(msg){
@@ -70,8 +68,8 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             console.hlog(document.body.className);
             console.hlog(window.webpage.device.os); // operating system for the device e.g "Windows"
             console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina or "normal"
-            console.hlog(window.webpage.device.screen.dpi); // the dot per inch e.g.
-	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome"
+            console.hlog(window.webpage.device.screen.dpi); // the dot per inch e.g. 24
+	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
             console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
 	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
@@ -101,8 +99,8 @@ After including the script to any page you choose (like above), it can be used o
 
 /* Accessibility for screen readers for visually-impared/non-sighted users */
 
- body.yes-moz a.fb-social[data-intro-text]:before{ /* Geckos -> Firefox, WebSpirit, IceDragon */
-    content:" This is a link to Facebook"; 
+ .gecko a.fb-social[data-intro-text]:before{ /* Geckos -> Firefox, WebSpirit, IceDragon */
+    content:" This is a link to Facebook on Gecko browsers"; 
     width: 1px;
     height:1px;
     overflow:hidden;
@@ -114,7 +112,7 @@ After including the script to any page you choose (like above), it can be used o
 
  [class*='1024x600'] .docked-feedback-box,
  [class*='1024x768'] .docked-feedback-box{
-	  display:inline-block;
+    display:inline-block;
     transform:rotate(-90deg);
     line-height:normal;
     vertical-align:normal;
@@ -174,11 +172,11 @@ body[class*='standards IE7'] [class*='column-']{
 }
 
 /* when browser is in quirks mode, we make the body 70% transparent and disable all controls */
-
-.quirks {
-	opacity:0.7;
-	filter:alpha(opacity=70);
-	-ms-filter:"alpha(opacity=70)";
+/* specifically on IE browsers with the Trident engine */
+.trident.quirks {
+  opacity:0.7;
+  filter:alpha(opacity=70);
+  -ms-filter:"alpha(opacity=70)";
   cursor:not-allowed;
 }
 
@@ -196,8 +194,8 @@ html .gecko .banner {
   	background-size:cover;
 }
 
-/* target an edge browser for svg banner image */
-.svg .microsoftedge .banner{
+/* target the legacy edge browser for svg banner image */
+.svg .microsoftedge.non-chromium-edge .banner{
    background-size:cover;
    height:400px;
    max-width:100%;
@@ -206,7 +204,7 @@ html .gecko .banner {
 
 /* ignore the newer blink engine for Opera. only apply gradient to presto engine for Desktop Opera */
 
-.cssgradient .presto.yes-opera .banner{
+.cssgradient .presto .banner {
 	background-image:-o-linear-gradient(top, #F5F5F5, #E4E4E4);
 }
 
@@ -235,6 +233,8 @@ html .gecko .banner {
    font-weight:bold;
 }
 
+/* detect old browsers and display a banner up-top on the webpage */
+
 .oldMoz .browser-update,
 .oldChrome .browser-update,
 .oldSafari .browser-update,
@@ -250,15 +250,20 @@ html .gecko .banner {
 
 ## Support
 
-Available on all major browsers including IE - plus **Browsengine** reports the correct version of IE even if IE is in emulation mode !
+Available on all major browsers 
+
+- **Browsengine** reports the correct version of IE even if IE is in emulation mode !
+- **Browsengine** correctly differentiates _EdgeHTML_ (Legacy Edge: 2014 - 2019) from _EdgeChromium_ (New Edge: 2019 - date)
+
 
 ## Contributing
 
-Please see the CONTRIBUTING.MD file for more details. Thank you.
+Please see the [CONTRIBUTING.MD](https://github.com/isocroft/browsengine/blob/master/CONTRIBUTING.MD) file for more details. Thank you.
 
-## Testimonies / Users
+## Wesites Using This Project
 
 There are a couple of websites where **Browsengine** is already being used namely:
 
 - **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
 - **Stitch, Nigeria** - [Stitch Website](https://www.stitch.ng)
+- **Synergixe, Nigeria** - [Synergixe Website](https://www.synergixe.com.ng)
