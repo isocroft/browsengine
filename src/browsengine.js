@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.1.0
+ * @version: 0.1.1
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 23/05/2020
+ * @updated: 05/06/2020
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -551,26 +551,28 @@ contentLoaded.apply(null, [window, function(){
 		
 	     }
 	
-	     w.isSafariAndIOS12OrLater = function(){
-		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function');
+	     w.isSafariAndiOS12OrLater = function(){
+		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && ();
              }
 
-             w.isOpera15OrLater = function(){
-		return isBlink && !isPresto && (!!w.opr && !!w.opr.addons && typeof w.CSS.supports === 'function'); 
+             w.isOpera33OrLater = function(){
+		return isBlink && !isPresto && (!!w.opr && !!w.opr.addons && typeof w.CSS.supports === 'function') && (String(w.caches) === '[object CacheStorage]'); 
   	     }
 
 	     w.isEdge17OrLater = function(){
-		return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function');
+		return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() { [native code] }');
 	     }
 	
 	     w.isChrome40OrLater = function(){
 		var i = d.createElement('input');
-   		return isChrWebkit && isChromiumBlink && (typeof i['reportValidity'] === 'function');
+   		return isChrWebkit && isChromiumBlink && (typeof i['reportValidity'] === 'function') && (String(i['reportValidity']) === 'function reportValidity() { [native code] }');
  	     }
 
 	     w.isFirefox44OrLater = function(){
-		return isGecko && (typeof w.PushManager === 'function');
+		return isGecko && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
 	     }
+	
+	     w.isSamsungInternet4OrLater = function(){ return false; }
    
    		/* retrieve browser build name (if any) */
 
