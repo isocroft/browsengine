@@ -31,8 +31,9 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 	      <meta charest="utf-8">
 		    <title>Browsengine - TestDrvie</title>
 		  
-		    <script type="text/javascript" src="/path/to/Modernizr.js"></script> <!-- optional -->
-		    <script type="text/javascript" src="/path/to/browsengine.js"></script>
+	     	    <!-- Modernizr is optional -->
+		    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
+		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.1.1/dist/browsengine.min.js"></script>
 	   </head>
 	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
@@ -67,7 +68,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 
             console.hlog(document.body.className);
             console.hlog(window.webpage.device.os); // operating system for the device e.g "Windows"
-            console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina or "normal"
+            console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
             console.hlog(window.webpage.device.screen.dpi); // the dot per inch e.g. 24
 	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
             console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
@@ -90,7 +91,7 @@ After including the script to any page you choose (like above), it can be used o
 
  /* grouping styles based on engines */
 
- body.yes-webkit div.top-row{ /* Webkits -> Safari, Chrome, Arora, WebOS browser */
+ body.yes-webkit div.top-row{ /* Webkit(s) -> Safari, Chrome, Arora, WebOS browser */
     display:-webkit-flex;
     diaplay:flex;
     -webkit-flex-direction:row-reverse;
@@ -99,7 +100,7 @@ After including the script to any page you choose (like above), it can be used o
 
 /* Accessibility for screen readers for visually-impared/non-sighted users */
 
- .gecko a.fb-social[data-intro-text]:before{ /* Geckos -> Firefox, WebSpirit, IceDragon */
+ .gecko a.fb-social[data-intro-text]:before{ /* Gecko(s) -> Firefox, WebSpirit, IceDragon */
     content:" This is a link to Facebook on Gecko browsers"; 
     width: 1px;
     height:1px;
