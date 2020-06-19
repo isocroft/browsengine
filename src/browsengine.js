@@ -4,7 +4,7 @@
  * @version: 0.1.1
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 05/06/2020
+ * @updated: 06/19/2020
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -51,9 +51,9 @@ function has_pcredentials_iconurl(){
 
 function actual_non_emulated_IE_major_version() {
     // Detects the actual version of IE in use, even if it's in an older-IE emulation mode.
-    // IE JavaScript conditional compilation docs: https://msdn.microsoft.com/library/121hztk3%28v=vs.94%29.aspx
+    // IE JavaScript conditional compilation ( @cc_on )
 	
-    // @cc_on docs: https://msdn.microsoft.com/library/8ka90k2e%28v=vs.94%29.aspx
+    // See: https://msdn.microsoft.com/library/8ka90k2e%28v=vs.94%29.aspx
 
     var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')(); // jshint ignore:line
     
@@ -210,9 +210,9 @@ contentLoaded.apply(null, [window, function(){
 		   
 		},
 		isWebOS:function(bd){
-		   
-		   // @See: http://ryanmorr.com/the-state-of-browser-detection/
-		   return (('PalmSystem' in w) && (ua.search(/(Web|HPW)OS/) > -1));
+			
+		   	// @See: http://ryanmorr.com/the-state-of-browser-detection/
+		   	return (('PalmSystem' in w) && (ua.search(/(Web|HPW)OS/) > -1));
 		   
 		}	
 	},
@@ -551,28 +551,37 @@ contentLoaded.apply(null, [window, function(){
 		
 	     }
 	
-	     w.isSafariAndiOS12OrLater = function(){
-		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && ();
+	     var isSafariAndiOS12OrLater = function(){
+		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && (String(w.IntersectionObserver) === 'function IntersectionObserver() { [native code] }');
              }
 
-             w.isOpera33OrLater = function(){
-		return isBlink && !isPresto && (!!w.opr && !!w.opr.addons && typeof w.CSS.supports === 'function') && (String(w.caches) === '[object CacheStorage]'); 
+             var isOpera33OrLater = function(){
+		return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function')) && (String(w.caches) === '[object CacheStorage]'); 
   	     }
 
-	     w.isEdge17OrLater = function(){
+	     var isEdge17OrLater = function(){
 		return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() { [native code] }');
 	     }
 	
-	     w.isChrome40OrLater = function(){
+	     var isChrome40OrLater = function(){
 		var i = d.createElement('input');
    		return isChrWebkit && isChromiumBlink && (typeof i['reportValidity'] === 'function') && (String(i['reportValidity']) === 'function reportValidity() { [native code] }');
  	     }
 
-	     w.isFirefox44OrLater = function(){
+	     var isFirefox44OrLater = function(){
 		return isGecko && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
 	     }
 	
-	     w.isSamsungInternet4OrLater = function(){ return false; }
+	     var isSamsungInternet4OrLater = function(){ return false; }
+	     
+	     w.navigator.isSWCapable = function() {
+		return isSafariAndiOS12OrLater() 
+				|| isOpera33OrLater() 
+					|| isEdge17OrLater() 
+						|| isChrome40OrLater() 
+							|| isFirefox44OrLater() 
+								|| isSamsungInternet4OrLater();
+	     };
    
    		/* retrieve browser build name (if any) */
 
