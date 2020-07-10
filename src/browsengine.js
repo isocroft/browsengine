@@ -829,7 +829,7 @@ contentLoaded.apply(null, [window, function(){
 
 		if(browserName == "edge" && ('msCredentials' in w)){
 		
-		    body.className += " microsoftedge like-gecko like-khtml non-chromium-edge";
+		    body.className += "yes-edge microsoftedge like-gecko like-khtml edgehtml non-chromium-edge";
 
 		    w.webpage.engine.edgehtml = true;
 			
@@ -840,7 +840,7 @@ contentLoaded.apply(null, [window, function(){
 
 		if((browserName == "edg" || browserName == "edga" || browserName == "edgios" || browserName == "edge") && ('onwebkitfullscreenchange' in d)){ 
 
-			body.className += " microsoftedge like-gecko like-khtml chromium-edge";
+			body.className += "yes-edge microsoftedge like-gecko like-khtml blink chromium-edge";
 
 			w.webpage.engine.blink = true;
 
@@ -1044,7 +1044,7 @@ contentLoaded.apply(null, [window, function(){
 	  
 	          	  if (body.className.indexOf("yes-webkit") == -1){
 
-	                      body.className += " yes-webkit safari like-gecko like-khtml";
+	                      body.className += " yes-webkit safari like-gecko webkit like-khtml";
 
 	              }
 	
