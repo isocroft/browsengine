@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.1.1
+ * @version: 0.1.2
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 06/19/2020
+ * @updated: 11/07/2020
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -47,6 +47,15 @@ function has_pcredentials_iconurl(){
 	}catch(ex){
 		return false;
 	}
+}
+
+function get_text_blob_method(method_name) {
+  try {
+	var blob = new Blob(['xxxx'], {type: 'text/plain'});
+        return ((method_name in blob) && blob[method_name]);
+  }catch(er){
+	return false;
+  }
 }
 
 function actual_non_emulated_IE_major_version() {
@@ -233,7 +242,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine (specifically from IE 11 ) */
 
-     isEdgeHTML = _engineFragment && (typeof w.msWriteProfilerMark === 'function' || typeof n.msManipulationViewsEnabled === 'boolean') && ('msCredentials' in w) && n.appName === "Netscape" && !isTrident,
+     isEdgeHTML = _engineFragment && (typeof get_text_blob_method('msDetachStream') === 'function' || typeof w.RTCIceGatherer === 'function') && (('msCredentials' in w) || ('msTemplatePrinter' in w) || !!w.StyleMedia) && n.vendor === "" && ('oncompassneedscalibration' in w) && !isTrident,
 
     /* Blink rendering engine is the new successor to Webkit for Chrome and other browsers like the newer version of Edge & Opera */
 
@@ -539,9 +548,9 @@ contentLoaded.apply(null, [window, function(){
 
 	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime || !!w.crypto) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
 		
-		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification))))&& (/Gecko/g.test(ua) || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
+		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification)))) && (typeof n.share === 'function' || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
 										       
-		  isEdgeChromium = !isChrWebkit && isBlink && n.vendor === "" && (!!w.StyleMedia || !!n.presentation)
+		  isEdgeChromium = isChrWebkit && isBlink && (!!n.presentation) && (typeof n.share === 'function') && (typeof n.canShare === 'function');
 										       
 		  isKDE = ((n.vendor.indexOf("KDE")) !== -1 && /Konqueror/g.test(ua)) && ('KhtmlUserInput' in body.style);
 			 
@@ -827,9 +836,9 @@ contentLoaded.apply(null, [window, function(){
 
 	else if(isEdgeHTML){	
 
-		if(browserName == "edge" && ('msCredentials' in w)){
+		if(browserName == "edge" && ('msWriteProfilerMark' in w) && ('onwebkitfullscreenchange' in d)){
 		
-		    body.className += "yes-edge microsoftedge like-gecko like-khtml edgehtml non-chromium-edge";
+		    body.className += "yes-edgehtml microsoftedge like-gecko like-khtml edgehtml legacy-edge";
 
 		    w.webpage.engine.edgehtml = true;
 			
@@ -838,9 +847,9 @@ contentLoaded.apply(null, [window, function(){
 		} 
 	}else if(isEdgeChromium){
 
-		if((browserName == "edg" || browserName == "edga" || browserName == "edgios" || browserName == "edge") && ('onwebkitfullscreenchange' in d)){ 
+		if((browserName == "edg" || browserName == "edga" || browserName == "edgios")){ 
 
-			body.className += "yes-edge microsoftedge like-gecko like-khtml blink chromium-edge";
+			body.className += "yes-blink microsoftedge like-gecko like-khtml blink chromium-edge";
 
 			w.webpage.engine.blink = true;
 
@@ -900,7 +909,7 @@ contentLoaded.apply(null, [window, function(){
 		 
          if (body.className.indexOf("yes-khtml") > -1){
 
-                body.className+=" yes-khtml konqueror like-gecko";
+                body.className+=" yes-khtml konqueror khtml like-gecko";
          }
 
          w.webpage.engine.khtml = true;
