@@ -1,4 +1,4 @@
-﻿# Browsengine
+# Browsengine
 
 This is a small library for detecting different browser engines, their versions and the devices they run on as is used all across the web. it works by processing the information available from the browser engine and placing these in the <q>class</q> attribute of the &lt;body&gt; tag.
 
@@ -33,7 +33,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 		  
 	     	    <!-- Modernizr is optional -->
 		    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
-		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.1.2/dist/browsengine.min.js"></script>
+		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.1.3/dist/browsengine.min.js"></script>
 	   </head>
 	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
