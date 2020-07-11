@@ -195,12 +195,18 @@ html .gecko .banner {
   	background-size:cover;
 }
 
-/* target the legacy edge browser for svg banner image */
-.svg .microsoftedge.non-chromium-edge .banner{
+/* target the legacy edge (EdgeHTML) browser for svg banner image */
+.svg .microsoftedge.legacy-edge .banner {
    background-size:cover;
    height:400px;
    max-width:100%;
    background-image:url('./assets/img/vectors/flakes.svg');
+}
+
+/* Both EdgeHTML & Edge(Blink) use the same CSS property to remove native decoration on select tags */
+.yes-edgehtml.legacy-edge select[name="sla"], 
+.yes-blink.chromium-edge select[name="sla"] {
+  -webkit-appearance: none;
 }
 
 /* ignore the newer blink engine for Opera. only apply gradient to presto engine for Desktop Opera */
@@ -254,7 +260,7 @@ html .gecko .banner {
 Available on all major browsers 
 
 - **Browsengine** reports the correct version of IE even if IE is in emulation mode !
-- **Browsengine** correctly differentiates _EdgeHTML_ (Legacy Edge: 2014 - 2019) from _EdgeChromium_ (New Edge: 2019 - date)
+- **Browsengine** correctly differentiates _EdgeHTML_ (Legacy Edge: 2014 - 2019) from _Edge(Blink)_ (New Edge: 2020 till date)
 
 
 ## Contributing
