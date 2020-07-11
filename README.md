@@ -33,7 +33,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 		  
 	     	    <!-- Modernizr is optional -->
 		    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
-		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.1.1/dist/browsengine.min.js"></script>
+		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.1.2/dist/browsengine.min.js"></script>
 	   </head>
 	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
