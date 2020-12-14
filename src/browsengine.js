@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.1.2
+ * @version: 0.1.3
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 11/07/2020
+ * @updated: 14/12/2020
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -563,6 +563,10 @@ contentLoaded.apply(null, [window, function(){
 	     var isSafariAndiOS12OrLater = function(){
 		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && (String(w.IntersectionObserver) === 'function IntersectionObserver() { [native code] }');
              }
+	     
+	     var isOpera15OrLater = function(){
+	     	return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function'));
+	     }
 
              var isOpera33OrLater = function(){
 		return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function')) && (String(w.caches) === '[object CacheStorage]'); 
