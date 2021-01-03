@@ -1,14 +1,14 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.1.3
+ * @version: 0.1.4
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 14/12/2020
+ * @updated: 10/02/2021
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
- * All Rights Reserved. Copyright (c) 2014 - 2020
+ * All Rights Reserved. Copyright (c) 2014 - 2021
  */
  
  
@@ -266,25 +266,35 @@ contentLoaded.apply(null, [window, function(){
 	
     	dpi = w.screen.colorDepth || w.screen.pixelDepth; // mostly '32' ... sometimes '24'
 
-    	w.webpage.device.screen.dpi = dpi;
+    	w.webpage.device.screen.color_depth = dpi;
 
    	 	/* 
 			if the engine in use is Gecko (firefox, flock, webspirit, e.t.c) 
 			or the engine in use is Trident (IE), [pixel-density] is calculated in
-			the most approximate manner - 86% correct {probability}.
+			the most approximate manner - 89% correct {probability}.
 		*/
 	 
 	if(isTrident || isGecko){
-	    
-		 pixelDensity = (w.devicePixelRatio || parseFloat(w.screen.availWidth / winWidth));
+	     /*
+	     	On Firefox 18 Mozilla changes the `window.devicePixelRatio` value on manual zoom (cmd/ctrl +/-), 
+		making it impossible to know whether the browser is in zoom mode or if it is a retina device.
+	     */
+		 pixelDensity = (
+			 w.devicePixelRatio !== "undefined" 
+			 	&& typeof w.getInterface === "undefined" 
+			 		&& !isTrident 
+			 		? parseFloat(w.screen.availWidth / winWidth) 
+			 		: (w.devicePixelRatio || w.screen.deviceXDPI / w.screen.logicalXDPI));
 		
-	}else{
+	} else {
 	  
 		pixelDensity = w.devicePixelRatio;
 
 	}
+	
+	w.pixelDensity = pixelDensity;
 
-	Device = {
+	var Device = {
 		isTouchCapable:function(){
 
 			return ('ontouchstart' in w)  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
@@ -320,8 +330,7 @@ contentLoaded.apply(null, [window, function(){
 		    	return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width < 768) && (w.screen.width / pixelDensity) < 768);
 		
 		}
-	};
-	
+	},
 	
 	
 	Screen = {
@@ -514,14 +523,18 @@ contentLoaded.apply(null, [window, function(){
 		  break;
 		  
 		  default:
-        if(Device.onDesktop())
+        if(Device.onDesktop()) {
           body.setAttribute("aria-view-mode","desktop");
-        else if(Device.onTablet())
+	  w.webpage.device.type = 'desktop';
+	} else if(Device.onTablet()) {
           body.setAttribute("aria-view-mode","tablet");
-        else if(Device.onMobile())
+	  w.webpage.device.type = 'tablet';
+	} else if(Device.onMobile()) {
           body.setAttribute("aria-view-mode","mobile");
-        else
-		     body.setAttribute("aria-view-mode","unknown");
+	  w.webpage.device.type = 'mobile';
+	} else {
+	  body.setAttribute("aria-view-mode","unknown");
+	}
 
 		  break;
     };
@@ -529,6 +542,7 @@ contentLoaded.apply(null, [window, function(){
 	body.setAttribute("aria-last-detected", document.lastModified);
 
 	body.setAttribute("aria-touch-capable", String(Device.isTouchCapable()));
+	w.webpage.device.touch_capable = Device.isTouchCapable();
 
     if(Screen.isRetina()){
 
@@ -542,6 +556,9 @@ contentLoaded.apply(null, [window, function(){
 
     	w.webpage.device.screen.type = 'normal';
     } 	
+	
+	
+    w.webpage.device.zoom_level = (w.pixelDensity * 100).toFixed();
 	
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with old IE/Opera and others...
@@ -582,7 +599,7 @@ contentLoaded.apply(null, [window, function(){
  	     }
 
 	     var isFirefox44OrLater = function(){
-		return isGecko && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
+		return isGecko && typeof d.charset !== "undefined" && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
 	     }
 	
 	     var isSamsungInternet4OrLater = function(){ return false; }
@@ -714,10 +731,12 @@ contentLoaded.apply(null, [window, function(){
 	    }else if(OS.isOperaMini(body)){
 		    
 		    	body.setAttribute('aria-user-agent','Opera Mini');
+		        w.webpage.device.opera_mini = true;
 		    
 	    }else if(OS.isOperaMobile(body)){
 		    
 		    	body.setAttribute('aria-user-agent','Opera Mobile');
+		         w.webpage.device.opera_mobile = true;
 		    
 	    }else if(OS.isMac(body)){
 	
@@ -805,6 +824,10 @@ contentLoaded.apply(null, [window, function(){
 				window.webpage.engine.version = "7.0";
 			break;
 		}
+	    
+	    w.webpage.device.zoom_level = ieActual === 10 || ieActual === 11 
+		    ? ((d.documentElement.offsetHeight / w.innerHeight) * 100 + 0.1000).toFixed();
+		    : ((d.frames.screen.deviceXDPI / d.frames.screen.systemXDPI) * 100 + 0.4999).toFixed()
 		
 	    /* Here we are just inserting a marker for IE10+ */
 
@@ -1048,8 +1071,10 @@ contentLoaded.apply(null, [window, function(){
 		  		w.webpage.device.browser_build = 'webkit-chrome';
           
             }
+	     
+	    w.webpage.device.zoom_level = (((w.outerWidth) / w.innerWidth)*100).toFixed();
 
-    }
+        }
 	
 	/* Here we are detecting Safari from version 2.0+ */
 	
@@ -1064,6 +1089,8 @@ contentLoaded.apply(null, [window, function(){
 			  	  w.webpage.engine.webkit = true;
 		
 				  w.webpage.device.browser_build = 'webkit-safari';
+		
+		w.webpage.device.zoom_level = (((d.documentElement.clientWidth) / w.innerWidth)*100).toFixed();
 	          
 	}
 	
@@ -1113,6 +1140,8 @@ contentLoaded.apply(null, [window, function(){
            }
 
            w.webpage.engine.presto = true;
+	    
+	   w.webpage.device.zoom_level = ((w.top.outerWidth / w.top.innerWidth) * 100).toFixed();
 
     }
 
