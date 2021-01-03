@@ -826,7 +826,7 @@ contentLoaded.apply(null, [window, function(){
 		}
 	    
 	    w.webpage.device.zoom_level = ieActual === 10 || ieActual === 11 
-		    ? ((d.documentElement.offsetHeight / w.innerHeight) * 100 + 0.1000).toFixed();
+		    ? ((d.documentElement.offsetHeight / w.innerHeight) * 100 + 0.1000).toFixed()
 		    : ((d.frames.screen.deviceXDPI / d.frames.screen.systemXDPI) * 100 + 0.4999).toFixed()
 		
 	    /* Here we are just inserting a marker for IE10+ */
