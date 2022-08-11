@@ -67,19 +67,21 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             /* Browsengine exposes an object {webpage} on the global window object */
 
             console.hlog(document.body.className);
-            console.hlog(window.webpage.device.os); // operating system for the device e.g "Windows"
+            console.hlog(window.webpage.device.os); // operating system for the device e.g. "Windows"
+	    console.hlog(window.webpage.device.zoom_level); // zoom level for the device e.g. 100%
+	    console.hlog(window.webpage.engine.pointer_enabled); // pointer events enabled e.g. true
             console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
             console.hlog(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
-	    console.log(window.webpage.device.screen.pixel_density); device pixel ratio e.g 2
+	    console.hlog(window.webpage.device.screen.pixel_density); // device pixel ratio e.g. 2
 	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
             console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
 	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
 	
-	     console.log(navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
-	     console.log(navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
+	     console.log(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
+	     console.log(window.navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
 	     
-	     console.log(navigator.isSWCapable()); // determine if the browser can run a service worker natively
+	     console.log(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
         </script>
 	 </body>
   </html>
