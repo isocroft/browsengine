@@ -78,10 +78,10 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 	
 	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
 	
-	     console.log(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
-	     console.log(window.navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
+	     console.hlog(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
+	     console.hlog(window.navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
 	     
-	     console.log(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
+	     console.hlog(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
         </script>
 	 </body>
   </html>
