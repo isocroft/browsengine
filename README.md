@@ -33,7 +33,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 		  
 	     	    <!-- Modernizr is optional -->
 		    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
-		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.1.3/dist/browsengine.min.js"></script>
+		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.2.1/dist/browsengine.min.js"></script>
 	   </head>
 	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
@@ -69,7 +69,8 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
             console.hlog(document.body.className);
             console.hlog(window.webpage.device.os); // operating system for the device e.g "Windows"
             console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
-            console.hlog(window.webpage.device.screen.dpi); // the dot per inch e.g. 24
+            console.hlog(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
+	    console.log(window.webpage.device.screen.pixel_density); device pixel ratio e.g 2
 	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
             console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
@@ -77,6 +78,8 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 	
 	     console.log(navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
 	     console.log(navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
+	     
+	     console.log(navigator.isSWCapable()); // determine if the browser can run a service worker natively
         </script>
 	 </body>
   </html>
