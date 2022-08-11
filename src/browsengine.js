@@ -1,25 +1,15 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.1.4
+ * @version: 0.2.1
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 10/02/2021
+ * @updated: 13/08/2022
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
- * All Rights Reserved. Copyright (c) 2014 - 2021
+ * All Rights Reserved. Copyright (c) 2014 - 2022
  */
- 
- 
-
-/* @TODO: (next version)
-
- 	BROWSENGINE FIX - Nexus Tablet { width:601px ,  pixelDensity:1.332 }
-
- 	Nexus Tablet ====> wrongly passes as "Mobile Device" - fix with aspect-ratio calculations in JS 
-
-*/
 
 
 
@@ -147,7 +137,7 @@ function contentLoaded (win, fn, obj) {
 
 contentLoaded.apply(null, [window, function(){ 
 	
-	var w=this, d=w.document, rt = d.documentElement,  dd="documentMode", ci = (w.clientInformation || {}), n= w.navigator, eid = (ci.productSub || n.productSub || (w.opera && w.opera.buildNumber())), ua = (ci.userAgent || n.userAgent), apn = n.appName, apv = (ci.appVersion || n.appVersion), /* global objects... */
+	var w=this, d=w.document, rt = d.documentElement, mm = (w.matchMedia || function () { return {matches: false} }), dd="documentMode", ci = (w.clientInformation || {}), n= w.navigator, eid = (ci.productSub || n.productSub || (w.opera && w.opera.buildNumber())), ua = (ci.userAgent || n.userAgent), apn = n.appName, apv = (ci.appVersion || n.appVersion), /* global objects... */
 	
 	body, Device, isGecko = false, isEdgeHTML = false, isChromiumBlink = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isEdgeChromium = false, isKDE = false, nk = ua.toLowerCase(),
 	
@@ -228,7 +218,7 @@ contentLoaded.apply(null, [window, function(){
 
 	 body = d.body || d.getElementsByTagName('body')[0],
 
-	/* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detectig it. */	
+	/* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detecting it. */	
 	 
      isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof w.mozInnerScreenX == 'number') && ('registerContentHandler' in n || 'registerProtocolHandler' in n) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
 
@@ -254,68 +244,67 @@ contentLoaded.apply(null, [window, function(){
 	
 	/* setup info object - {webpage} */
 
-	w.webpage = {engine:{},old:{},device:{screen:{},os:'',browser_build:''}};
+	w.webpage = {engine:{ old_impl: Boolean(w.applicationCache), pointer_enabled: n.pointerEnabled },old:{},device:{screen:{},os:'',browser_build:''}};
 
-	var winHeight = w.innerHeight || rt.clientHeight || body.clientHeight,
+	var winHeight = w.innerHeight > rt.clientHeight ? w.innerHeight : rt.clientHeight,
 	
-	winWidth = w.innerWidth || rt.clientWidth || body.clientWidth,
+	winWidth = w.innerWidth > rt.clientWidth ? w.innerWidth : rt.clientWidth,
 	
 	viewfactor = ((winWidth/winHeight).toPrecision(2)),
 	
 	screenfactor = ((w.screen.width/w.screen.height).toPrecision(4)),
 	
-    	dpi = w.screen.colorDepth || w.screen.pixelDepth; // mostly '32' ... sometimes '24'
+    	dpz = w.screen.colorDepth || w.screen.pixelDepth;
 
-    	w.webpage.device.screen.color_depth = dpi;
+        
+
+    	w.webpage.device.screen.color_depth = dpz;
 
    	 	/* 
 			if the engine in use is Gecko (firefox, flock, webspirit, e.t.c) 
 			or the engine in use is Trident (IE), [pixel-density] is calculated in
 			the most approximate manner - 89% correct {probability}.
 		*/
-	 
-	if(isTrident || isGecko){
+	
+	if(isTrident || (isGecko && ((w.File && new File([], "") || {}).lastModified !== (new Date).getTime()))){
 	     /*
 	     	On Firefox 18 Mozilla changes the `window.devicePixelRatio` value on manual zoom (cmd/ctrl +/-), 
 		making it impossible to know whether the browser is in zoom mode or if it is a retina device.
 	     */
 		 pixelDensity = (
-			 w.devicePixelRatio !== "undefined" 
-			 	&& typeof w.getInterface === "undefined" 
+			 typeof w.getInterface === "undefined" 
 			 		&& !isTrident 
-			 		? parseFloat(w.screen.availWidth / winWidth) 
-			 		: (w.devicePixelRatio || w.screen.deviceXDPI / w.screen.logicalXDPI));
+			 		? parseFloat((w.screen.availHeight/ (320 * (w.screen.availHeight > 1000 ? 2 : 1))).toPrecision(w.screen.availHeight > 1000 ? 1 : 3))
+			 		: Math.sqrt(w.screen.logicalXDPI * w.screen.logicalYDPI) / 96);
 		
 	} else {
-	  
-		pixelDensity = w.devicePixelRatio;
-
-	}
+                pixelDensity = w.devicePixelRatio || (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
+        }
 	
-	w.pixelDensity = pixelDensity;
+	w.webpage.device.screen.pixel_density = pixelDensity;
 
 	var Device = {
 		isTouchCapable:function(){
+                        var isTouchSupported = (function () {
+                            try{ d.createEvent("TouchEvent"); return true; }
+                            catch(e){ return false; }
+                        }());
 
-			return ('ontouchstart' in w)  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
+			return (isTouchSupported && ('ontouchstart' in w))  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
 		},
 		onDesktop:function(){
 
-			return (((~~pixelDensity) <= 1) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
+			return (( (~~pixelDensity) <= 1 || (~~pixelDensity) >= 2) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
 		},
 		onTV:function(){
 
 			if(!this.isTouchCapable()) return false;
 
-			return ((~~pixelDensity) == 1.5) && (w.screen.width > 1920);
+			return ((~~pixelDensity) == 1.5) && (w.screen.width >= 1920);
 		},
-		onTablet:function(canBeCapable){
+		onTablet:function(){
 
-			if(!canBeCapable){
-				if(!this.isTouchCapable()){
-					return false;
-				} 
-			}
+				if(!this.isTouchCapable()) return false;
 		
 		    	return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onMobile();
 			
@@ -327,7 +316,7 @@ contentLoaded.apply(null, [window, function(){
 	    	
 	    		/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
 		
-		    	return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width < 768) && (w.screen.width / pixelDensity) < 768);
+		    	return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
 		
 		}
 	},
@@ -509,7 +498,7 @@ contentLoaded.apply(null, [window, function(){
 					body.setAttribute("aria-view-mode", "tablet");
 
 				if(Device.onDesktop())
-			    	body.setAttribute("aria-view-mode","desktop"); 
+			    	    body.setAttribute("aria-view-mode","desktop"); 
 			 }	
 		  break;
 		  
@@ -558,7 +547,7 @@ contentLoaded.apply(null, [window, function(){
     } 	
 	
 	
-    w.webpage.device.zoom_level = (w.pixelDensity * 100).toFixed();
+    w.webpage.device.zoom_level = (w.webpage.device.screen.pixel_density * 100).toFixed();
 	
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with old IE/Opera and others...
@@ -581,7 +570,7 @@ contentLoaded.apply(null, [window, function(){
 		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && (String(w.IntersectionObserver) === 'function IntersectionObserver() { [native code] }');
              }
 	     
-	     var isOpera15OrLater = function(){
+	     w.isOpera15OrLater = function(){
 	     	return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function'));
 	     }
 
@@ -597,6 +586,10 @@ contentLoaded.apply(null, [window, function(){
 		var i = d.createElement('input');
    		return isChrWebkit && isChromiumBlink && (typeof i['reportValidity'] === 'function') && (String(i['reportValidity']) === 'function reportValidity() { [native code] }');
  	     }
+
+             var isFirefox19OrLater = function() {
+                return ((w.File && new w.File([], "") || {}).lastModified === (new Date).getTime())
+             }
 
 	     var isFirefox44OrLater = function(){
 		return isGecko && typeof d.charset !== "undefined" && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
@@ -825,9 +818,6 @@ contentLoaded.apply(null, [window, function(){
 			break;
 		}
 	    
-	    w.webpage.device.zoom_level = ieActual === 10 || ieActual === 11 
-		    ? ((d.documentElement.offsetHeight / w.innerHeight) * 100 + 0.1000).toFixed()
-		    : ((d.frames.screen.deviceXDPI / d.frames.screen.systemXDPI) * 100 + 0.4999).toFixed()
 		
 	    /* Here we are just inserting a marker for IE10+ */
 
@@ -1071,8 +1061,6 @@ contentLoaded.apply(null, [window, function(){
 		  		w.webpage.device.browser_build = 'webkit-chrome';
           
             }
-	     
-	    w.webpage.device.zoom_level = (((w.outerWidth) / w.innerWidth)*100).toFixed();
 
         }
 	
@@ -1090,7 +1078,6 @@ contentLoaded.apply(null, [window, function(){
 		
 				  w.webpage.device.browser_build = 'webkit-safari';
 		
-		w.webpage.device.zoom_level = (((d.documentElement.clientWidth) / w.innerWidth)*100).toFixed();
 	          
 	}
 	
@@ -1141,14 +1128,13 @@ contentLoaded.apply(null, [window, function(){
 
            w.webpage.engine.presto = true;
 	    
-	   w.webpage.device.zoom_level = ((w.top.outerWidth / w.top.innerWidth) * 100).toFixed();
 
     }
 
     /* Here we are detecting Opera from version 15.0+ */
     /* PS: Note that Opera 15.0 (beta) is based on Webkit but Opera 15.0+ was based on Blink after Google updated their annoucements in 2013 */
 
-    else if(w.isOpera15OrLater() && (browserName == 'opr' && n.vendor === 'Google Inc.')){ 
+    else if(isOpera15OrLater() && (browserName == 'opr' && n.vendor === 'Google Inc.')){ 
 
     	 if (body.className.indexOf("yes-blink") == -1){
 
