@@ -1,10 +1,10 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.2.1
+ * @version: 0.2.2
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 13/08/2022
+ * @updated: 20/08/2022
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -285,9 +285,10 @@ contentLoaded.apply(null, [window, function(){
 
 	var Device = {
 		isTouchCapable:function(){
+			var canTouch = ("ontouchstart" in w || (w.DocumentTouch && d instanceof w.DocumentTouch))
                         var isTouchSupported = (function () {
                             try{ d.createEvent("TouchEvent"); return true; }
-                            catch(e){ return false; }
+                            catch(e){ return canTouch; }
                         }());
 
 			return (isTouchSupported && ('ontouchstart' in w))  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
@@ -334,7 +335,7 @@ contentLoaded.apply(null, [window, function(){
     	  case "1.706": // screendim - 1024x600 {falsely-reported as 819x480} - Landscape
     	  case "1.708": // scrrendim - 1024x600 {falsely-reported as 820x480} - Landscape
           case "1.707": // screendim - 1024x600 - Landscape e.g iPad, Dell Mini, HP Mini
-		  case "0.5859": // screendim - 600x1024 - Portrait
+	  case "0.5859": // screendim - 600x1024 - Portrait
 		     
 			 if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && w.screen.width >= 600){
 			    body.className += (screenfactor.search(/^(?:1\.70(?:[6-8]))$/)==0)? " 1024x600" : " 600x1024";
@@ -343,9 +344,9 @@ contentLoaded.apply(null, [window, function(){
 				   body.setAttribute("aria-view-mode", "tablet");
 				
 				if(Device.onDesktop())
-                   body.setAttribute("aria-view-mode", "desktop");
+                   			body.setAttribute("aria-view-mode", "desktop");
 
-			 }else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
+			 } else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 			    if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 1024x600" : " 600x1024";
 				else
@@ -357,11 +358,11 @@ contentLoaded.apply(null, [window, function(){
 				 if(Device.onMobile())
                      body.setAttribute("aria-view-mode","mobile");				 
 			 }	  
-		  break;
+  	break;
 		  
-		  case "0.5634": // screendim - 320x568 - Portriat e.g Samsung Galaxy S3, 
-		  case "0.5625": // screedim - 900x1600 Portrait, screendim - 720x1280, screendim - 360x640 - Portrait e.g iPhone
-	    	  case "0.5622": // screen - 375x667 - Portrait e.g
+  	case "0.5634": // screendim - 320x568 - Portriat e.g Samsung Galaxy S3, 
+  	case "0.5625": // screedim - 900x1600 Portrait, screendim - 720x1280, screendim - 360x640 - Portrait e.g iPhone
+  	case "0.5622": // screen - 375x667 - Portrait e.g
 		  	if(OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body)){
 			    	 
 				 if(Device.onMobile())
@@ -370,10 +371,10 @@ contentLoaded.apply(null, [window, function(){
 				if(Device.onTablet())
 					body.setAttribute("aria-view-mode","tablet");
             		}     
-		  break;
+  	break;
 		  
-		  case "0.5993": // screendim - 320x534 - Portrait e.g Techno, Samsung Galaxy S4, Nokia XL
-		  case "1.669": // screendim - 534x320 - Landscape
+  	case "0.5993": // screendim - 320x534 - Portrait e.g Techno, Samsung Galaxy S4, Nokia XL
+  	case "1.669": // screendim - 534x320 - Landscape
 		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 			     if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 534x320" : " 320x534";
@@ -383,10 +384,10 @@ contentLoaded.apply(null, [window, function(){
 				 if(Device.onMobile())
                      			body.setAttribute("aria-view-mode","mobile");				 
 			 }
-		  break;
+  	break;
 		  
-		  case "1.500": // screendim 480x320 - Landscape
-		  case "0.6667": // screendim 320x480 - Portrait
+  	case "1.500": // screendim 480x320 - Landscape
+  	case "0.6667": // screendim 320x480 - Portrait
 		     if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
 			     	if(z)
 				    body.className += (Math.abs(w.orientation || 0) == 90)? " 480x320" : " 320x480";
@@ -398,9 +399,9 @@ contentLoaded.apply(null, [window, function(){
 			 }
 		  break;
 		  
-      	  case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
-		  case "0.7500": // screendim - 1200x1600, screendim - 864x1152, screendim - 768x1024, screendim - 600x800, screendim - 360x480, screendim - 480x640 - Portrait e.g Nokia-XL
-		  case "0.7496": // IPad Pro
+  	case "1.333": // screendim - 1600x1200, screendim - 1152x864, screendim - 1024x768, screendim - 800x600, screendim - 480x360, screendim - 640x480 - Landscape
+  	case "0.7500": // screendim - 1200x1600, screendim - 864x1152, screendim - 768x1024, screendim - 600x800, screendim - 360x480, screendim - 480x640 - Portrait e.g Nokia-XL
+  	case "0.7496": // IPad Pro
 		        if((OS.isWinPC(body) || OS.isMac(body) || OS.isLinux(body)) && (w.screen.width >= 768)){
 				   body.className += (screenfactor=="1.333")? (w.screen.width <= 1024? " 1024x768" : " 1152x864") : (w.screen.width <= 768?" 768x1024" : " 864x1152");
 				   
@@ -512,18 +513,18 @@ contentLoaded.apply(null, [window, function(){
 		  break;
 		  
 		  default:
-        if(Device.onDesktop()) {
-          body.setAttribute("aria-view-mode","desktop");
-	  w.webpage.device.type = 'desktop';
-	} else if(Device.onTablet()) {
-          body.setAttribute("aria-view-mode","tablet");
-	  w.webpage.device.type = 'tablet';
-	} else if(Device.onMobile()) {
-          body.setAttribute("aria-view-mode","mobile");
-	  w.webpage.device.type = 'mobile';
-	} else {
-	  body.setAttribute("aria-view-mode","unknown");
-	}
+			if(Device.onDesktop()) {
+			  body.setAttribute("aria-view-mode","desktop");
+			  w.webpage.device.type = 'desktop';
+			} else if(Device.onTablet()) {
+			  body.setAttribute("aria-view-mode","tablet");
+			  w.webpage.device.type = 'tablet';
+			} else if(Device.onMobile()) {
+			  body.setAttribute("aria-view-mode","mobile");
+			  w.webpage.device.type = 'mobile';
+			} else {
+			  body.setAttribute("aria-view-mode","unknown");
+			}
 
 		  break;
     };
