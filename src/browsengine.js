@@ -1,14 +1,14 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.2.2
+ * @version: 0.2.3
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 20/08/2022
+ * @updated: 21/03/2024
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
- * All Rights Reserved. Copyright (c) 2014 - 2022
+ * All Rights Reserved. Copyright (c) 2014 - 2024
  */
 
 
