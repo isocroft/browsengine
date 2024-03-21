@@ -41,10 +41,10 @@ function has_pcredentials_iconurl(){
 
 function get_text_blob_method(method_name) {
   try {
-	var blob = new Blob(['xxxx'], {type: 'text/plain'});
-        return ((method_name in blob) && blob[method_name]);
-  }catch(er){
-	return false;
+     var blob = new Blob(['xxxx'], {type: 'text/plain'});
+     return ((method_name in blob) && blob[method_name]);
+  } catch(error) {
+     return false;
   }
 }
 
@@ -228,7 +228,7 @@ contentLoaded.apply(null, [window, function(){
 
      /* Trident is the rendering engine used by older versions of IE - 9 - 11 */
 
-     isTrident = _engineFragment && ((/*@cc_on!@*/false || d.createEventObject || ('webdriver' in n)) && (/Trident/g.test(ua) || typeof n.cpuClass === 'string') && (!!w.toStaticHTML)), // && ('behavior' in body.style),
+     isTrident = _engineFragment && ((/*@cc_on!@*/false || d.createEventObject || ('webdriver' in n)) && (/Trident/g.test(ua) || typeof n.cpuClass === 'string') && (!!w.toStaticHTML)),
 
     /* EdgeHTML rendering engine is a 'well-standardized' fork of the Trident rendering engine (specifically from IE 11 ) */
 
@@ -240,7 +240,13 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine for specific distributions of Chromium specifically newer versions of Chrome */
 
-     isChromiumBlink = isBlink && !!(w.Intl.v8BreakIterator) && (has_pcredentials_iconurl());
+     isChromiumBlink = isBlink && !!(w.Intl.v8BreakIterator) && (has_pcredentials_iconurl()),
+		
+     isFirefoxBrowser = ("ondevicelight" in w) && !('webkitSpeechRecognition' in w) && ("onbeforescriptexecute" in d),
+		
+     isSafariBrowserOnIOS = ("gesturechange" in w),
+
+     isSafraiBrowserOnMac = ("webkitmouseforcedown" in w);
 	
 	/* setup info object - {webpage} */
 
@@ -267,18 +273,19 @@ contentLoaded.apply(null, [window, function(){
 		*/
 	
 	if(isTrident || (isGecko && ((w.File && new File([], "") || {}).lastModified !== (new Date).getTime()))){
-	     /*
-	     	On Firefox 18 Mozilla changes the `window.devicePixelRatio` value on manual zoom (cmd/ctrl +/-), 
-		making it impossible to know whether the browser is in zoom mode or if it is a retina device.
-	     */
-		 pixelDensity = (
-			 typeof w.getInterface === "undefined" 
-			 		&& !isTrident 
-			 		? parseFloat((w.screen.availHeight/ (320 * (w.screen.availHeight > 1000 ? 2 : 1))).toPrecision(w.screen.availHeight > 1000 ? 1 : 3))
-			 		: Math.sqrt(w.screen.logicalXDPI * w.screen.logicalYDPI) / 96);
+	    /*
+	      On Firefox 18 Mozilla changes the `window.devicePixelRatio` value on manual zoom (cmd/ctrl +/-), 
+	      making it impossible to know whether the browser is in zoom mode or if it is a retina device.
+	    */
+	    pixelDensity = (
+	      typeof w.getInterface === "undefined" 
+		&& !isTrident 
+		? parseFloat((w.screen.availHeight/ (320 * (w.screen.availHeight > 1000 ? 2 : 1))).toPrecision(w.screen.availHeight > 1000 ? 1 : 3))
+		: Math.sqrt(w.screen.logicalXDPI * w.screen.logicalYDPI) / 96
+	    );
 		
 	} else {
-                pixelDensity = w.devicePixelRatio || (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
+            pixelDensity = w.devicePixelRatio || (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
         }
 	
 	w.webpage.device.screen.pixel_density = pixelDensity;
@@ -295,7 +302,7 @@ contentLoaded.apply(null, [window, function(){
 		},
 		onDesktop:function(){
 
-			return (( (~~pixelDensity) <= 1 || (~~pixelDensity) >= 2) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
+			return ((isSafraiBrowserOnMac || (~~pixelDensity) <= 1 || (~~pixelDensity) >= 2) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
 		},
 		onTV:function(){
 
@@ -317,18 +324,16 @@ contentLoaded.apply(null, [window, function(){
 	    	
 	    		/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
 		
-		    	return (ua.match(/[^-]mobi|mobile/i) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
+		    	return ((ua.match(/[^-]mobi|mobile/i) || isSafariBrowserOnIOS) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
 		
 		}
 	},
 	
 	
 	Screen = {
-	     isRetina: function(){
-	
-	          return (pixelDensity >= 2);
-	   
-	     }
+	  isRetina: function() {
+	    return (pixelDensity >= 2);
+	  }
 	};
 	
     switch(screenfactor){
