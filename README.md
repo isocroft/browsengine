@@ -14,7 +14,7 @@ Here's an excerpt from a book titled **Professional JavaScript for Web Developer
 
 >As mentioned earlier, the exact name and version of the browser isn't as important as the rendering engine being used. If Firefox, Camino and Netscape all use the same version of _Gecko_, their capabilities will be the same.
 
-However, Zakas, with all due respect to him as the professional, didn't exaclty do justice to this very important manner of thinking in the code examples and explanations that followed the paragraph where this excerpt was taken. For instance, _Opera_ isn't a rending engine, _Presto_ is.
+However, [Nicolas Zakas](https://github.com/nzakas), with all due respect to him as the professional, didn't exaclty do justice to this very important manner of thinking in the code examples and explanations that followed the paragraph where this excerpt was taken. For instance, _Opera_ isn't a rending engine, _Presto_ is.
 
 This shows that this manner of dealing with cross-browser quirks is very helpful and effective.
 
@@ -33,7 +33,7 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 		  
 	     	    <!-- Modernizr is optional -->
 		    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
-		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.2.1/dist/browsengine.min.js"></script>
+		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.2.3/dist/browsengine.min.js"></script>
 	   </head>
 	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
@@ -53,28 +53,57 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
                 alert("gecko rendering engine");
             }
 
+	    if (window.webpage.engine.old_impl && window.webpage.engine.blink) {
+		alert("This is a very old implementation of the blink rendering engine");
+            } else if (window.webpage.engine.webkit && window.webpage.engine.old_impl) {
+		alert("This is a very old implementation of the webkit rendering engine");
+	    }
+
             
-                // the console object is never available when dev tools is not open
-                if(!window.console && window.webpage.old.ie)){
-                    window.console = {}
-                };
+ 	    if (window.webpage.old.ie) {
+	    	alert("This is a very old version of internet explorer browser");
+	    }
                     
-		window.console.hlog = function(msg){
-		    document.body.innerHTML += msg;
-	    	}
-                
+	    if (window.webpage.old.firefox) {
+	    	alert("This is a very old version of firefox browser");
+	    }
+
+	    if (window.webpage.old.microsoftedge) {
+	    	alert("This is a very old version of edge browser");
+	    }
+
+	    if (window.webpage.old.chrome) {
+	    	alert("This is a very old version of chrome browser");
+	    }
+
+	    if (window.webpage.old.brave) {
+	    	alert("This is a very old version of brave browser");
+	    }
+
+	    if (window.webpage.old.safari) {
+	    	alert("This is a very old version of safari browser");
+	    }
+
+	    if (window.webpage.newer.chrome) {
+	    	alert("This is a much newer version of chrome browser");
+	    }
+
+	    if (window.webpage.newer.opera) {
+	    	alert("This is a much newer version of opera browser");
+	    }
 
             /* Browsengine exposes an object {webpage} on the global window object */
 
-            console.hlog(document.body.className);
-            console.hlog(window.webpage.device.os); // operating system for the device e.g. "Windows"
-	    console.hlog(window.webpage.device.zoom_level); // zoom level for the device e.g. 100%
-	    console.hlog(window.webpage.engine.pointer_enabled); // pointer events enabled e.g. true
-            console.hlog(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
-            console.hlog(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
-	    console.hlog(window.webpage.device.screen.pixel_density); // device pixel ratio e.g. 2
-	    console.hlog(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
-            console.hlog(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
+            console.log(document.body.className); //
+            console.log(window.webpage.device.os); // operating system for the device e.g. "Windows"
+	    console.log(window.webpage.device.zoom_level); // zoom level for the device e.g. 100%
+	    console.log(window.webpage.standards); // document is rendered in standards mode e.g. true
+            console.log(window.webpage.device.touch_capable); // screen touch capability e.g. false
+            console.log(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
+            console.log(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
+	    console.log(window.webpage.device.screen.pixel_density); // device pixel ratio e.g. 2
+	    console.log(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
+            console.log(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
 	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
 	
@@ -217,17 +246,14 @@ html .gecko .banner {
 /* ignore the newer blink engine for Opera. only apply gradient to presto engine for Desktop Opera */
 
 .cssgradient .presto .banner {
-	background-image:-o-linear-gradient(top, #F5F5F5, #E4E4E4);
+  background-image:-o-linear-gradient(top, #F5F5F5, #E4E4E4);
 }
 
-.cssgradients .banner{	
-	background-image:linear-gradient(top, #F5F5F5, #E4E4E4);
+.cssgradients .banner{
+  background-image:linear-gradient(top, #F5F5F5, #E4E4E4);
 }
 
-/* using SVG to emulate CSS3 gradients only for IE 9.0 */
-.no-cssgradient.svg .trident.IE9 .banner{
-	background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9ImcyMDQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0Y1RjVGNSIgb2Zmc2V0PSIwIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0U0RTRFNCIgb2Zmc2V0PSIxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZzIwNCkiIC8+Cjwvc3ZnPg==);
-}
+
 
 /* display an upgrade messsage for users surfing with old browsers */
 .browser-update {
@@ -250,13 +276,18 @@ html .gecko .banner {
 .oldMoz .browser-update,
 .oldChrome .browser-update,
 .oldSafari .browser-update,
-.oldOpera .browser-update{
+.oldOpera .browser-update {
    display:block;
 }
 
 /* target retina displays for styling */
-[aria-screen-view="retina"] .dropzone{
+[aria-screen-view="retina"] .dropzone {
    background-color:hsl(120, 100%, 75%);
+}
+
+/* using SVG to emulate CSS3 gradients only for IE 9.0 */
+.no-cssgradient.svg .trident.IE9 .banner {
+  background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9ImcyMDQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0Y1RjVGNSIgb2Zmc2V0PSIwIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0U0RTRFNCIgb2Zmc2V0PSIxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZzIwNCkiIC8+Cjwvc3ZnPg==);
 }
 ```
 
