@@ -104,7 +104,14 @@ This is where a new concept comes in. I call it **Engine detection**. It's a con
 	    console.log(window.webpage.device.screen.pixel_density); // device pixel ratio e.g. 2
 	    console.log(window.webpage.device.browser_build); // the engine and browser name e.g. "chromium-blink-opera", "webkit-chrome", "chromium-edgehtml-edge"
             console.log(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
-	
+
+
+	    console.log(w.webpage.device.agent.safari_mac); // the browser is safari on a mac book
+	    console.log(w.webpage.device.agent.safari_ios); // the browser is safari on an iphone
+	    console.log(w.webpage.device.agent.chrome_android); // the browser is chrome on an android phone
+	    console.log(w.webpage.device.agent.opera_mobile);
+	    console.log(w.webpage.device.agent.opera_mini);
+
 	   /* The `navigator` object now supports `navigator.oscpu` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
            /* Unfortunately, `navigator.oscpu` has been deprecated on Firefox and will be removed from this library soon */
 	   console.log(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
