@@ -958,7 +958,7 @@ contentLoaded.apply(null, [window, function(){
              	     body.className += ieTag;      		 
 		}
 
-		body.className += " trident";
+		body.className += " trident oldIE";
 	        
 	    w.webpage.engine.trident = true; 
 
@@ -1079,7 +1079,7 @@ contentLoaded.apply(null, [window, function(){
 
      else if (isChrWebkit && (typeof w["webkitURL"] == 'function')) {
 	  w.webpage.old.chrome = !isNewerBlinkChromiumBrowser;
-	  body.className += w.webpage.old.chrome ? " oldChrome" + ""; 
+	  body.className += w.webpage.old.chrome ? " oldChrome" : ""; 
 	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
           switch(browserVersion){
 
