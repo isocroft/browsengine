@@ -20,22 +20,22 @@ This shows that this manner of dealing with cross-browser quirks is very helpful
 
 ## The Solution
 
-This is where a new concept comes in. I call it **Engine Detection**. It's a concept that plays nice with **Feature detection** too. It compliments **Feature detection** whenever there are false positive reports by a browser (i.e. the browser says it supports something but there are bugs/quirks in the way it supports it). For example, Firefox supports `navigator.onLine`. So, feature detection will report a positive (albeit a false one in versions 4 to 41) for this feature. However, Firefox has [a well known quirk](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine) with its support. In this case (with Firefox), we need a combination of _Feature_ and _Engine_ detection which will help in [shimming](https://codepen.io/isocroft/pen/OxLeBw) this quirk/weird behavior. When it comes to **Engine Detection**, we deal with the version number of the rendering engine (mostly) and not the version of the browser. Why ? Because, it makes more sense as the engine reveals itself even more in what it supports and doesn't support. For instance, Firefox (version 3.6) uses **Gecko version 1.9.2**. Similarly, old Opera (version 11.62) uses **Presto version 2.10.229**.
+This is where a new concept comes in. I call it **Engine detection**. It's a concept that plays nice with **Feature detection** too. It is more reliable than **Feature detection** because it reports correctly even if the user-agent (browser) http header API (`navigator.userAgent`) has been spoofed. It also compliments **Feature detection** (where possible) whenever there are false positive reports by a browser (i.e. the browser says it supports something but there are bugs/quirks in the way it supports it). For example, Firefox supports `navigator.onLine`. So, feature detection will report a positive (albeit a false one in versions 4 to 41) for this feature. However, Firefox has [a well known quirk](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine) with its support. In this case (with Firefox), we need a combination of _Feature_ and _Engine_ detection which will help in [shimming](https://codepen.io/isocroft/pen/OxLeBw) this quirk/weird behavior. When it comes to **Engine Detection**, we deal with the version number of the rendering engine (mostly) and not the version of the browser. Why ? Because, it makes more sense as the engine reveals itself even more in what it supports and doesn't support. For instance, Firefox (version 3.6) uses **Gecko version 1.9.2**. Similarly, old Opera (version 11.62) uses **Presto version 2.10.229**.
 
 ## Usage
  
 ```html
   <!DOCTYPE html>
   <html lang="en">
-     <head>
-	      <meta charest="utf-8">
-		    <title>Browsengine - TestDrvie</title>
+    <head>
+	 <meta charest="utf-8">
+	<title>Browsengine - TestDrvie</title>
 		  
-	     	    <!-- Modernizr is optional -->
-		    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
-		    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.2.3/dist/browsengine.min.js"></script>
-	   </head>
-	   <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
+	<!-- Modernizr is optional -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.2.3/dist/browsengine.min.js"></script>
+    </head>
+    <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
         <script type="text/javascript">
 
@@ -105,12 +105,11 @@ This is where a new concept comes in. I call it **Engine Detection**. It's a con
 	    console.log(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
             console.log(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
-	   /* The `navigator` object now supports `navigator.oscpu` and `navigator.ostitle` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
-	
-	     console.hlog(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
-	     console.hlog(window.navigator.ostitle); // operating system brand name e.g. "Windows 10 Pro; Intel - 64 bits"
+	   /* The `navigator` object now supports `navigator.oscpu` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
+           /* Unfortunately, `navigator.oscpu` has been deprecated on Firefox and will be removed from this library soon */
+	   console.log(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
 	     
-	     console.hlog(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
+	   console.log(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
         </script>
 	 </body>
   </html>
