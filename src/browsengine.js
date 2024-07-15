@@ -264,7 +264,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	/* setup info object - {webpage} */
 
-	w.webpage = {engine:{ old_impl: Boolean(w.applicationCache || w.Object.observe || w.Object.prototype.watch || n.pointerEnabled) },newer:{},old:{},device:{screen:{},os:'',browser_build:''}};
+	w.webpage = {engine:{ old_impl: Boolean(w.applicationCache || w.Object.observe || w.Object.prototype.watch || n.pointerEnabled) },newer:{},old:{},device:{screen:{},agent:{},os:'',browser_build:''}};
 
 	var winHeight = w.innerHeight > rt.clientHeight ? w.innerHeight : rt.clientHeight,
 	
@@ -583,17 +583,17 @@ contentLoaded.apply(null, [window, function(){
 	   w.addEventListener('resize', function () {
 	    var $pixelDensity = w.devicePixelRatio || (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
 	    w.webpage.device.zoom_level = ($pixelDensity * 100).toFixed();
-	   }, true);
-   } else (isTrident) {
+	   });
+   } else if (isTrident) {
 	var deviceXDPI = w.screen.deviceXDPI;
         setInterval(function (){
-            if(w.screen.deviceXDPI !== w.deviceXDPI){
-                deviceXDPI = screen.deviceXDPI;
-                w.webpage.device.zoom_level = (screen.deviceXDPI * 100).toFixed();
+            if(w.screen.deviceXDPI !== deviceXDPI){
+                deviceXDPI = w.screen.deviceXDPI;
+                w.webpage.device.zoom_level = ((w.screen.deviceXDPI / w.screen.logicalXDPI) * 100).toFixed();
             }
         }, 500);
    } else if (('matchMedia' in w) && !w.devicePixelRatio) {
-	  function observeZoom(cb, opts) {
+	function observeZoom (cb, opts) {
 	    opts = {
 	      // first pass for defaults - range and granularity to capture all the zoom levels in desktop firefox
 	      ceiling: 3,
@@ -623,7 +623,7 @@ contentLoaded.apply(null, [window, function(){
 	        last = now
 	      }
 	    }))
-	  }
+	}
         observeZoom(function () {
 	   var $pixelDensity = (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
 	    w.webpage.device.zoom_level = ($pixelDensity * 100).toFixed();
@@ -726,7 +726,7 @@ contentLoaded.apply(null, [window, function(){
      		 w.webpage.old.ie = true;
 	    }
 		
-		if(browserVersion <= 10.6 && browserName == "opera" && isPresto){
+		if(browserVersion <= 12.0 && browserName == "opera" && isPresto){
 
 			/* There is only one browser using the [Presto] engine */
 			/* Though Opera now uses the [Blink] engine as from 15.0+ */
@@ -764,7 +764,7 @@ contentLoaded.apply(null, [window, function(){
 		    }
 		}	
 
-		if(browserVersion <= 13.0 && browserName == "edge" && isEdgeHTML){
+		if(browserVersion <= 17.0 && browserName == "edge" && isEdgeHTML){
 
 			body.className += " oldEdge";
 
@@ -773,13 +773,15 @@ contentLoaded.apply(null, [window, function(){
 			
 		if(browserVersion <= 40.0 && browserName == "webkit" && !isBlink){
 		     		   
-		    body.className += (isChrWebkit)? " oldChrome" : (isSafWebkit? " oldSafari": "");
+		    body.className += (isChrWebkit && !(isChromiumBlink || isNewerBlinkChromiumBrowser))? " oldChrome" : "";
 
-		    if(isSafWebkit){
+		    if(isSafWebkit && typeof body.requestFullscreen !== 'function'){
+
+			body.className += " oldSafari";
 		    	
 		    	w.webpage.old.safari = true;
 
-		    }else if(isChrWebkit){
+		    }else if(isChrWebkit && !(isChromiumBlink || isNewerBlinkChromiumBrowser)){
 
 		    	w.webpage.old.chrome = true;
 		    }
@@ -801,12 +803,16 @@ contentLoaded.apply(null, [window, function(){
 	           	w.webpage.device.os = 'ios';
 
 			if (OS.isSafariOnIOS(body)) {
-				w.webpage.device.safari_ios = true
+				w.webpage.device.agent.safari_ios = true
 			}
 	
 	    	}else if(OS.isAndroid(body)){
 		
 			   body.setAttribute('aria-os-data', 'Linux Andriod');
+
+				if (isChromeBrowserOnAndroid) {
+					w.webpage.device.agent.chrome_android = true
+				}
 
 			   w.webpage.device.os = 'linux andriod';
 
@@ -831,12 +837,12 @@ contentLoaded.apply(null, [window, function(){
 	    }else if(OS.isOperaMini(body)){
 		    
 		    	body.setAttribute('aria-user-agent','Opera Mini');
-		        w.webpage.device.opera_mini = true;
+		        w.webpage.device.agent.opera_mini = true;
 		    
 	    }else if(OS.isOperaMobile(body)){
 		    
 		    	body.setAttribute('aria-user-agent','Opera Mobile');
-		         w.webpage.device.opera_mobile = true;
+		         w.webpage.device.agent.opera_mobile = true;
 		    
 	    }else if(OS.isMac(body)){
 	
@@ -845,7 +851,7 @@ contentLoaded.apply(null, [window, function(){
 	           w.webpage.device.os = (n.platform || "").toLowerCase();
 
 		  if (OS.isSafariOnMac()) {
-			w.webpage.device.safari_mac = true;
+			w.webpage.device.agent.safari_mac = true;
 		  }
 	
 	    }else if(OS.isSun(body)){
@@ -962,6 +968,7 @@ contentLoaded.apply(null, [window, function(){
 		
 		/* detecting Brave */
 		if (!isNewerBlinkChromiumBrowser) {
+			body.className += " oldBrave";
 			w.webpage.old.brave = true;
 	   	} else {
 			w.webpage.newer.brave = true;
@@ -977,6 +984,7 @@ contentLoaded.apply(null, [window, function(){
 		/* detecting Microsoft Edge */
 		
 		w.webpage.old.microsoftedge = !isNewerBlinkChromiumBrowser;
+		body.className += w.webpage.old.microsoftedge ? " oldEdge" : "";
 		if(browserName == "edge" && ('msWriteProfilerMark' in w) && ('onwebkitfullscreenchange' in d)){
 		
 		    body.className += " yes-edgehtml microsoftedge like-gecko like-khtml edgehtml legacy-edge";
@@ -1005,6 +1013,7 @@ contentLoaded.apply(null, [window, function(){
       
 	    // Here we are detecting Firefox, IceWeasel & SeaMonkey from version 3.0+
 	   if (!isNewerGeckoBrowser) {
+		body.className += " oldMoz";
 	   	w.webpage.old.firefox = true;
 	   } else {
 		w.webpage.newer.firefox = true;
@@ -1070,6 +1079,7 @@ contentLoaded.apply(null, [window, function(){
 
      else if (isChrWebkit && (typeof w["webkitURL"] == 'function')) {
 	  w.webpage.old.chrome = !isNewerBlinkChromiumBrowser;
+	  body.className += w.webpage.old.chrome ? " oldChrome" + ""; 
 	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
           switch(browserVersion){
 
@@ -1155,9 +1165,11 @@ contentLoaded.apply(null, [window, function(){
 		  
 		  		w.webpage.device.browser_build = 'chromium-blink-chrome';
 
-          }else{
+          } else {
 
-
+		if (typeof body.requestFullscreen !== 'function') {
+			body.className += " oldSafari";
+		}
   				/* Webkit Engine - browsers */
 
                if (body.className.indexOf("yes-webkit") == -1){
@@ -1229,6 +1241,7 @@ contentLoaded.apply(null, [window, function(){
 
     	   var oprVersion = parseInt(w.opera.version());
 	    w.webpage.old.opera = !isNewerBlinkChromiumBrowser;
+	    body.className += w.webpage.old.opera ? " oldOpera" : "";
 
 	   // See: https://help.opera.com/en/operas-archived-history/
     	   switch(oprVersion){
