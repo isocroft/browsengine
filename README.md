@@ -102,7 +102,7 @@ This is where a new concept comes in. I call it **Engine detection**. It's a con
             console.log(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
             console.log(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
 	    console.log(window.webpage.device.screen.pixel_density); // device pixel ratio e.g. 2
-	    console.log(window.webpage.device.browser_build); // the engine and browser name e.g. "blink-opera", "webkit-chrome", "edgehtml-edge"
+	    console.log(window.webpage.device.browser_build); // the engine and browser name e.g. "chromium-blink-opera", "webkit-chrome", "chromium-edgehtml-edge"
             console.log(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 	
 	   /* The `navigator` object now supports `navigator.oscpu` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
@@ -111,7 +111,7 @@ This is where a new concept comes in. I call it **Engine detection**. It's a con
 	     
 	   console.log(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
         </script>
-	 </body>
+     </body>
   </html>
 ```
 After including the script to any page you choose (like above), it can be used on its own or in conjunction with *Modernizr*. The classes added to the &lt;body&gt; tag can be referenced in your CSS file(s) or in JavaScript.
@@ -307,5 +307,4 @@ Please see the [CONTRIBUTING.MD](https://github.com/isocroft/browsengine/blob/ma
 There are a couple of websites where **Browsengine** is already being used namely:
 
 - **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
-- **Stitch, Nigeria** - [Stitch Website](https://www.stitch.ng)
 - **Synergixe, Nigeria** - [Synergixe Website](https://www.synergixe.com.ng)
