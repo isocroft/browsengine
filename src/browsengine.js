@@ -4,7 +4,7 @@
  * @version: 0.2.3
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 21/03/2024
+ * @updated: 15/07/2024
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -63,16 +63,16 @@ function actual_non_emulated_IE_major_version() {
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
 }
 
-function polyfill_oscpu_lang(eng, av){
-	if(window.navigator.oscpu === undefined){
+function polyfill_oscpu_lang(engine, av){
+	if (window.navigator.oscpu === undefined) {
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
-		if(eng.webkit || eng.blink || eng.edgehtml){
-   			var e_index = av.indexOf(')');
-			window.navigator.oscpu = (av.substring(b_index + 1, e_index)).replace('(', '').trim();
-		}else if(eng.trident){
+		if(engine.webkit || engine.blink || engine.edgehtml){
+   			e_index = av.indexOf(')');
+			window.Navigator.prototype.oscpu = (av.substring(b_index + 1, e_index)).replace('(', '').trim();
+		}else if(engine.trident){
 			splited = av.split(';');
 			window.navigator.oscpu = splited[3];
-		}else if(!eng.gecko){
+		}else if(!engine.gecko){
 			//presto -> old Opera
 			splited = av.split(';');
 			window.navigator.oscpu = (splited[0] || "").substring(b_index);
@@ -139,7 +139,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	var w=this, d=w.document, rt = d.documentElement, mm = (w.matchMedia || function () { return {matches: false} }), dd="documentMode", ci = (w.clientInformation || {}), n= w.navigator, eid = (ci.productSub || n.productSub || (w.opera && w.opera.buildNumber())), ua = (ci.userAgent || n.userAgent), apn = n.appName, apv = (ci.appVersion || n.appVersion), /* global objects... */
 	
-	body, Device, isGecko = false, isEdgeHTML = false, isChromiumBlink = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, vMode, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isEdgeChromium = false, isKDE = false, nk = ua.toLowerCase(),
+	body, Device, isGecko = false, isEdgeHTML = false, isChromiumBlink = false, isBlink = false, isTrident = false, isSilk = false, isYandex = false, isPresto = false, Screen, pixelDensity, browserName, browserVersion, isChrWebkit=false, isSafWebkit=false, isEdgeChromium = false, isKDE = false, nk = ua.toLowerCase(),
 	
 	_engineFragment = ((w.chrome || ('onafterprint' in w) || d.readyState) && ('clientInformation' in w)), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
@@ -157,6 +157,12 @@ contentLoaded.apply(null, [window, function(){
 		"Linux; Andriod 6.0; Nexus 5 Build/MRA58N":"Linux Android Oreo {6.0}; ARM - 64 bits",
 		"Linux; Andriod 4.1.2; Nokia_XL Build/JZO54K":"Linux Android Jelly Bean {4.1}; ARM - 32 bits" // 'Linux armv71' { armv8 and above is 64 bits }
 	},
+
+	isSafariBrowserOnIOS = ("gesturechange" in w),
+
+     	isChromeBrowserOnAndroid = ("contacts" in n) && (typeof n.contacts.select === "function"),
+
+     	isSafraiBrowserOnMac = ("webkitmouseforcedown" in w),
 	    
 	OS = { //detecting OS data...
 	  	isLinux:function(){ 
@@ -194,12 +200,20 @@ contentLoaded.apply(null, [window, function(){
 		},
 		isIOS:function(bd){ 
 		
-		    	return !(OS.isWinMobile(bd)) && (!!n.platform && !w.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || (ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0);
+		    	return !(OS.isWinMobile(bd)) && (!!n.platform && !w.MSStream && /iPad|iPhone|iPod/.test(n.platform)) || ((ua.indexOf("iPhone;") > 0) || (ua.indexOf("iPad;") > 0) || (ua.indexOf("iPod;") > 0) || (ua.search(/iPhone OS 3_(1|2)_2/) > 0));
 
+		},
+		isSafariOnIOS:function (bd) {
+			
+			return this.isIOS(bd) && isSafariBrowserOnIOS;
+		},
+		isSafariOnMac:function () {
+
+			return this.isMac() && isSafraiBrowserOnMac;
 		},
     		isAndroid:function(bd){
 		
-		  	return !(OS.isWinMobile(bd)) && (this.isLinux()) && ((ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0) && (ua.search(/like/ig) == -1));
+		  	return !(OS.isWinMobile(bd)) && (this.isLinux()) && (isChromeBrowserOnAndroid || (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0) && (ua.search(/like/ig) == -1));
 		  
 		},
     		isBB:function(bd){
@@ -220,7 +234,7 @@ contentLoaded.apply(null, [window, function(){
 
 	/* Gecko has so many browsers using it (or worse it's name in their [navigator.product] property). so, we have to be kia-ful when detecting it. */	
 	 
-     isGecko = (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof w.mozInnerScreenX == 'number') && ('registerContentHandler' in n || 'registerProtocolHandler' in n) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
+     isGecko = (n.taintEnabled && !is_own_prop(n, 'taintEnabled')) && (n.vendor === "" && (n.oscpu && (!is_own_prop(n, 'oscpu')) && typeof w.mozInnerScreenX == 'number') && ('registerContentHandler' in n || 'registerProtocolHandler' in n) && (/Gecko/g.test(ua) || typeof w['InstallTrigger'] !== 'undefined')), 
 
      /* Presto is the only rendering engine used by older Opeara browsers, so we include the presence of {opera} object as a factor */
 
@@ -241,16 +255,16 @@ contentLoaded.apply(null, [window, function(){
     /* Blink rendering engine for specific distributions of Chromium specifically newer versions of Chrome */
 
      isChromiumBlink = isBlink && !!(w.Intl.v8BreakIterator) && (has_pcredentials_iconurl()),
-		
-     isFirefoxBrowser = ("ondevicelight" in w) && !('webkitSpeechRecognition' in w) && ("onbeforescriptexecute" in d),
-		
-     isSafariBrowserOnIOS = ("gesturechange" in w),
 
-     isSafraiBrowserOnMac = ("webkitmouseforcedown" in w);
+     isBrave = n.brave && n.brave.isBrave && n.brave.isBrave.name === "isBrave",
+
+     isNewerBlinkChromiumBrowser = ("windowControlsOverlay" in n),
+		
+     isNewerGeckoBrowser = ("ondevicelight" in w) && !('webkitSpeechRecognition' in w) && ("onbeforescriptexecute" in d);
 	
 	/* setup info object - {webpage} */
 
-	w.webpage = {engine:{ old_impl: Boolean(w.applicationCache), pointer_enabled: n.pointerEnabled },old:{},device:{screen:{},os:'',browser_build:''}};
+	w.webpage = {engine:{ old_impl: Boolean(w.applicationCache || w.Object.observe || w.Object.prototype.watch || n.pointerEnabled) },newer:{},old:{},device:{screen:{},os:'',browser_build:''}};
 
 	var winHeight = w.innerHeight > rt.clientHeight ? w.innerHeight : rt.clientHeight,
 	
@@ -266,15 +280,15 @@ contentLoaded.apply(null, [window, function(){
 
     	w.webpage.device.screen.color_depth = dpz;
 
-   	 	/* 
-			if the engine in use is Gecko (firefox, flock, webspirit, e.t.c) 
-			or the engine in use is Trident (IE), [pixel-density] is calculated in
-			the most approximate manner - 89% correct {probability}.
-		*/
+	/**!
+		if the engine in use is Gecko (firefox, flock, webspirit, e.t.c) 
+		or the engine in use is Trident (IE), [pixel-density] is calculated in
+		the most approximate manner - 89% correct {probability}.
+	*/
 	
-	if(isTrident || (isGecko && ((w.File && new File([], "") || {}).lastModified !== (new Date).getTime()))){
+	if (isTrident || ((isGecko || isNewerGeckoBrowser) && ((w.File && new File([], "") || {}).lastModified !== (new Date).getTime()))) {
 	    /*
-	      On Firefox 18 Mozilla changes the `window.devicePixelRatio` value on manual zoom (cmd/ctrl +/-), 
+	      On Firefox v18, Mozilla changes the `window.devicePixelRatio` value on manual zoom (cmd/ctrl +/-), 
 	      making it impossible to know whether the browser is in zoom mode or if it is a retina device.
 	    */
 	    pixelDensity = (
@@ -292,13 +306,20 @@ contentLoaded.apply(null, [window, function(){
 
 	var Device = {
 		isTouchCapable:function(){
-			var canTouch = ("ontouchstart" in w || (w.DocumentTouch && d instanceof w.DocumentTouch))
+			var event = null;
+			var canTouch = ("ontouchstart" in w || (w.DocumentTouch && (d instanceof w.DocumentTouch)))
                         var isTouchSupported = (function () {
-                            try{ d.createEvent("TouchEvent"); return true; }
-                            catch(e){ return canTouch; }
+                            try{
+				event = d.createEvent("TouchEvent"); return true;
+			    } catch(e){
+			     	return canTouch;
+			    } finally {
+				event = null
+			    }
+			  return false;
                         }());
 
-			return (isTouchSupported && ('ontouchstart' in w))  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange'));
+			return ((isTouchSupported && ('ontouchstart' in w))  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange')));
 		},
 		onDesktop:function(){
 
@@ -324,7 +345,7 @@ contentLoaded.apply(null, [window, function(){
 	    	
 	    		/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
 		
-		    	return ((ua.match(/[^-]mobi|mobile/i) || isSafariBrowserOnIOS) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
+		    	return ((ua.match(/[^-]mobi|mobile/i) || isSafariBrowserOnIOS || isChromeBrowserOnAndroid) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
 		
 		}
 	},
@@ -336,7 +357,7 @@ contentLoaded.apply(null, [window, function(){
 	  }
 	};
 	
-    switch(screenfactor){
+    switch (screenfactor) {
     	  case "1.706": // screendim - 1024x600 {falsely-reported as 819x480} - Landscape
     	  case "1.708": // scrrendim - 1024x600 {falsely-reported as 820x480} - Landscape
           case "1.707": // screendim - 1024x600 - Landscape e.g iPad, Dell Mini, HP Mini
@@ -352,16 +373,17 @@ contentLoaded.apply(null, [window, function(){
                    			body.setAttribute("aria-view-mode", "desktop");
 
 			 } else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndroid(body) || OS.isIOS(body) || OS.isOperaMini(body) || OS.isOperaMobile(body))){
-			    if(z)
-				    body.className += (Math.abs(w.orientation || 0) == 90)? " 1024x600" : " 600x1024";
-				else
-				    body.className += (screenfactor=="0.5859")? " 600x1024" : " 1024x600";
+			    if(z) {
+				    body.className += (Math.abs(w.orientation || 0) === 90)? " 1024x600" : " 600x1024";
+			    } else {
+				    body.className += (screenfactor  === "0.5859")? " 600x1024" : " 1024x600";
+			    }
 					
 			     if(Device.onTablet())
-                     body.setAttribute("aria-view-mode","tablet");
+                     		body.setAttribute("aria-view-mode","tablet");
 				 
 				 if(Device.onMobile())
-                     body.setAttribute("aria-view-mode","mobile");				 
+                     			body.setAttribute("aria-view-mode","mobile");				 
 			 }	  
   	break;
 		  
@@ -425,15 +447,16 @@ contentLoaded.apply(null, [window, function(){
 						   body.className += (screenfactor=="1.333")? " 800x600" : " 600x800";
 						   
                         		   body.setAttribute("aria-view-mode","tablet");
-				    }else if(Device.onMobile() && w.screen.width >= 360){
-					    if(z)
+				    } else if(Device.onMobile() && w.screen.width >= 360){
+					if(z) {
 				           body.className += (Math.abs(w.orientation || 0) == 90)?  " 480x360 640x480" : " 360x480 480x640";
-						else
-                           body.className += (screenfactor=="1.333")? " 480x360 640x480" : " 360x480 480x640";
+					} else {
+						body.className += (screenfactor=="1.333")? " 480x360 640x480" : " 360x480 480x640";
+					}
                         
-                        body.setAttribute("aria-view-mode", "mobile");
-					}	
-                }				   
+                        		body.setAttribute("aria-view-mode", "mobile");
+				}	
+                	}				   
           break;
 
           case "1.250": // screendim - 1280x1024 Portrait
@@ -441,10 +464,10 @@ contentLoaded.apply(null, [window, function(){
                  body.className += (screenfactor=="1.250")? " 1280x1024" : " 1024x1280";
 			     
 			     if(Device.onTablet())
-                     body.setAttribute("aria-view-mode","tablet");
+                     		body.setAttribute("aria-view-mode","tablet");
 				 
 				 if(Device.onDesktop())
-                     body.setAttribute("aria-view-mode","desktop");
+                     			body.setAttribute("aria-view-mode","desktop");
 
 			  }else if((OS.isWinMobile(body) || OS.isBB(body) || OS.isAndriod(body) || OS.isOperaMobile(body))){
 			     if(Device.onTablet())
@@ -534,10 +557,10 @@ contentLoaded.apply(null, [window, function(){
 		  break;
     };
 	
-	body.setAttribute("aria-last-detected", document.lastModified);
+	body.setAttribute("aria-last-detected", w.document.lastModified);
 
 	body.setAttribute("aria-touch-capable", String(Device.isTouchCapable()));
-	w.webpage.device.touch_capable = Device.isTouchCapable();
+	
 
     if(Screen.isRetina()){
 
@@ -552,17 +575,69 @@ contentLoaded.apply(null, [window, function(){
     	w.webpage.device.screen.type = 'normal';
     } 	
 	
-	
+
+    w.webpage.device.touch_capable = Device.isTouchCapable();
     w.webpage.device.zoom_level = (w.webpage.device.screen.pixel_density * 100).toFixed();
+
+   if (typeof w.devicePixelRatio === 'number' && ('matchMedia' in w)) {
+	   w.addEventListener('resize', function () {
+	    var $pixelDensity = w.devicePixelRatio || (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
+	    w.webpage.device.zoom_level = ($pixelDensity * 100).toFixed();
+	   }, true);
+   } else (isTrident) {
+	var deviceXDPI = w.screen.deviceXDPI;
+        setInterval(function (){
+            if(w.screen.deviceXDPI !== w.deviceXDPI){
+                deviceXDPI = screen.deviceXDPI;
+                w.webpage.device.zoom_level = (screen.deviceXDPI * 100).toFixed();
+            }
+        }, 500);
+   } else if (('matchMedia' in w) && !w.devicePixelRatio) {
+	  function observeZoom(cb, opts) {
+	    opts = {
+	      // first pass for defaults - range and granularity to capture all the zoom levels in desktop firefox
+	      ceiling: 3,
+	      floor: 0.3,
+	      granularity: 0.05,
+	      ...opts
+	    }
+	    //var precision = String(opts.granularity).split('.')[1].length;
+	
+	    var val = opts.floor
+	    var vals = []
+	    while (val <= opts.ceiling) {
+	      vals.push(val)
+	      val = w.parseFloat((val + opts.granularity).toFixed(/*precision*/))
+	    }
+	
+	    // construct a number of mediamatchers and assign CB to all of them
+	    const mqls = vals.map(v => w.matchMedia(`(min-resolution: ${v}dppx)`))
+	
+	    // poor person's throttle
+	    var throttle = 3
+	    var last = w.performance.now()
+	    mqls.forEach(mql => mql.addListener(function() {
+	      var now = w.performance.now()
+	      if (now - last > throttle) {
+	        cb()
+	        last = now
+	      }
+	    }))
+	  }
+        observeZoom(function () {
+	   var $pixelDensity = (mm('(resolution: 1dppx)').matches && 1) || (mm('(resolution: 2dppx)').matches && 2) || 0;
+	    w.webpage.device.zoom_level = ($pixelDensity * 100).toFixed();
+	})
+   }
 	
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with old IE/Opera and others...
 
 	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime || !!w.crypto) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
 		
-		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification)))) && (typeof n.share === 'function' || !n.presentation)); // && ('webkitDashboardRegion' in body.style);
+		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification)))) && (typeof n.share === 'function' || !n.presentation || !n.vibrate));
 										       
-		  isEdgeChromium = isChrWebkit && isBlink && (!!n.presentation) && (typeof n.share === 'function') && (typeof n.canShare === 'function');
+		  isEdgeChromium = isChrWebkit && isBlink && !isSafWebkit && (!!n.presentation) && (typeof n.share === 'function') && (typeof n.canShare === 'function');
 										       
 		  isKDE = ((n.vendor.indexOf("KDE")) !== -1 && /Konqueror/g.test(ua)) && ('KhtmlUserInput' in body.style);
 			 
@@ -572,44 +647,62 @@ contentLoaded.apply(null, [window, function(){
 		
 	     }
 	
-	     var isSafariAndiOS12OrLater = function(){
+	     w.isSafariAndiOS12OrLater = function() {
 		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && (String(w.IntersectionObserver) === 'function IntersectionObserver() { [native code] }');
              }
 	     
-	     w.isOpera15OrLater = function(){
+	     w.isOpera15OrLater = function() {
 	     	return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function'));
 	     }
 
-             var isOpera33OrLater = function(){
+             w.isOpera33OrLater = function() {
 		return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function')) && (String(w.caches) === '[object CacheStorage]'); 
   	     }
 
-	     var isEdge17OrLater = function(){
+	     w.isEdge17OrLater = function() {
 		return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() { [native code] }');
 	     }
 	
-	     var isChrome40OrLater = function(){
-		var i = d.createElement('input');
-   		return isChrWebkit && isChromiumBlink && (typeof i['reportValidity'] === 'function') && (String(i['reportValidity']) === 'function reportValidity() { [native code] }');
+	     w.isChrome40OrLater = function() {
+		var inp = d.createElement('input');
+   		return isChrWebkit && (isChromiumBlink || isNewerBlinkChromiumBrowser) && (typeof inp['reportValidity'] === 'function') && (String(inp['reportValidity']) === 'function reportValidity() { [native code] }');
  	     }
 
-             var isFirefox19OrLater = function() {
-                return ((w.File && new w.File([], "") || {}).lastModified === (new Date).getTime())
+             w.isFirefox19OrLater = function() {
+                return (isGecko || isNewerGeckoBrowser) && ((w.File && new w.File([], "") || {}).lastModified === (new Date).getTime())
              }
 
-	     var isFirefox44OrLater = function(){
-		return isGecko && typeof d.charset !== "undefined" && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
+	     w.isFirefox44OrLater = function(){
+		return (isGecko || isNewerGeckoBrowser) && typeof d.charset !== "undefined" && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
 	     }
 	
-	     var isSamsungInternet4OrLater = function(){ return false; }
+	     w.isSamsungInternet4OrLater = function() {
+                var isSamsungBrowser = (ua.indexOf('SamsungBrowser') !== -1 && !isChrWebkit && !isSafWebkit && !isEdgeChromium && typeof n.setAppBadge !== 'function');
+		
+		try {
+		   var dataInit = {
+		     data: "Some sample text"
+		   };
+
+		   var myPushEvent = new w.PushEvent("push", dataInit);
+
+		   return (myPushEvent.data.text() === "Some sample text") && isSamsungBrowser;   
+		} catch (errr) {
+		   /* Samsung Internet v4 specifically does not have the `data` property on `new PushEvent()` object */
+		   if (errr instanceof w.TypeError) {
+		   	return isSamsungBrowser;
+		   }
+		}
+		return false;
+	     }
 	     
 	     w.navigator.isSWCapable = function() {
-		return isSafariAndiOS12OrLater() 
-				|| isOpera33OrLater() 
-					|| isEdge17OrLater() 
-						|| isChrome40OrLater() 
-							|| isFirefox44OrLater() 
-								|| isSamsungInternet4OrLater();
+		return w.isSafariAndiOS12OrLater() 
+				|| w.isOpera33OrLater() 
+					|| w.isEdge17OrLater() 
+						|| w.isChrome40OrLater() 
+							|| w.isFirefox44OrLater() 
+								|| w.isSamsungInternet4OrLater();
 	     };
    
    		/* retrieve browser build name (if any) */
@@ -642,8 +735,12 @@ contentLoaded.apply(null, [window, function(){
 
 		    w.webpage.old.opera = true;
 		}
+
+		if (isNewerGeckoBrowser) {
+		  w.webpage.newer.gecko = true;
+		}
 			
-		if(browserVersion <= 35.0 && browserName == "mozilla" && isGecko){
+		if(browserVersion <= 35.0 && browserName == "mozilla" && isGecko && w.Object.prtotype.watch){
 
 			/* 
 				There are sevral browsers using the Mozillas' Gecko engine 
@@ -702,6 +799,10 @@ contentLoaded.apply(null, [window, function(){
 	           	body.setAttribute('aria-os-data', 'iOS');
 
 	           	w.webpage.device.os = 'ios';
+
+			if (OS.isSafariOnIOS(body)) {
+				w.webpage.device.safari_ios = true
+			}
 	
 	    	}else if(OS.isAndroid(body)){
 		
@@ -739,9 +840,13 @@ contentLoaded.apply(null, [window, function(){
 		    
 	    }else if(OS.isMac(body)){
 	
-	           body.setAttribute('aria-os-data','Macintosh');
+	           body.setAttribute('aria-os-data', n.platform);
 
-	           w.webpage.device.os = 'macintosh';
+	           w.webpage.device.os = (n.platform || "").toLowerCase();
+
+		  if (OS.isSafariOnMac()) {
+			w.webpage.device.safari_mac = true;
+		  }
 	
 	    }else if(OS.isSun(body)){
 		
@@ -772,9 +877,7 @@ contentLoaded.apply(null, [window, function(){
 		}
 	
 	try{
-		vMode = body.getAttribute("aria-view-mode");
-
-		w.webpage.device.type = vMode;
+		w.webpage.device.type = body.getAttribute("aria-view-mode");;
 
 	}catch(e){}
 
@@ -854,14 +957,29 @@ contentLoaded.apply(null, [window, function(){
 	    w.webpage.engine.trident = true; 
 
 	}
-	
-	/* detecting Microsoft Edge */
 
-	else if(isEdgeHTML){	
+	else if (isBrave) {
+		
+		/* detecting Brave */
+		if (!isNewerBlinkChromiumBrowser) {
+			w.webpage.old.brave = true;
+	   	} else {
+			w.webpage.newer.brave = true;
+	   	}
 
+		body.className += " yes-blink brave like-gecko like-khtml blink";
+
+		    w.webpage.engine.blink = true;
+			
+		    w.webpage.device.browser_build = 'chromium-blink-brave';
+
+	}else if(isEdgeHTML){
+		/* detecting Microsoft Edge */
+		
+		w.webpage.old.microsoftedge = !isNewerBlinkChromiumBrowser;
 		if(browserName == "edge" && ('msWriteProfilerMark' in w) && ('onwebkitfullscreenchange' in d)){
 		
-		    body.className += "yes-edgehtml microsoftedge like-gecko like-khtml edgehtml legacy-edge";
+		    body.className += " yes-edgehtml microsoftedge like-gecko like-khtml edgehtml legacy-edge";
 
 		    w.webpage.engine.edgehtml = true;
 			
@@ -870,18 +988,27 @@ contentLoaded.apply(null, [window, function(){
 		} 
 	}else if(isEdgeChromium){
 
+		if (isNewerBlinkChromiumBrowser) {
+	   		w.webpage.newer.microsoftedge = true;
+	   	}
+
 		if((browserName == "edg" || browserName == "edga" || browserName == "edgios")){ 
 
-			body.className += "yes-blink microsoftedge like-gecko like-khtml blink chromium-edge";
+			body.className += " yes-blink microsoftedge like-gecko like-khtml blink chromium-edge";
 
 			w.webpage.engine.blink = true;
 
-			w.webpage.device.browser_build = 'blink-edge';
+			w.webpage.device.browser_build = 'chromium-blink-edge';
 		}
 		
       }else if (isGecko) {
       
 	    // Here we are detecting Firefox, IceWeasel & SeaMonkey from version 3.0+
+	   if (!isNewerGeckoBrowser) {
+	   	w.webpage.old.firefox = true;
+	   } else {
+		w.webpage.newer.firefox = true;
+	   }
 			
 	    if(nk.search(/firefox|iceweasel/) > -1){
 
@@ -942,7 +1069,7 @@ contentLoaded.apply(null, [window, function(){
       /* Here we are detecting Chrome 1.0+, UC Browser from version 2.0+ and 5.0+ respectively */
 
      else if (isChrWebkit && (typeof w["webkitURL"] == 'function')) {
-
+	  w.webpage.old.chrome = !isNewerBlinkChromiumBrowser;
 	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
           switch(browserVersion){
 
@@ -998,6 +1125,10 @@ contentLoaded.apply(null, [window, function(){
 
           if(isChromiumBlink){
 
+	  	if (isNewerBlinkChromiumBrowser) {
+			w.webpage.newer.chrome = true;
+		}
+
           		 if (body.className.indexOf("yes-blink") == -1){
 
                        		body.className += " yes-blink chrome";
@@ -1022,7 +1153,7 @@ contentLoaded.apply(null, [window, function(){
 
 				 w.webpage.engine.blink = true;
 		  
-		  		w.webpage.device.browser_build = 'blink-chrome';
+		  		w.webpage.device.browser_build = 'chromium-blink-chrome';
 
           }else{
 
@@ -1097,6 +1228,7 @@ contentLoaded.apply(null, [window, function(){
     else  if ((('supportsCSS' in w) || 'attachEvent' in d) && (isPresto && browserName == 'opera')){ 
 
     	   var oprVersion = parseInt(w.opera.version());
+	    w.webpage.old.opera = !isNewerBlinkChromiumBrowser;
 
 	   // See: https://help.opera.com/en/operas-archived-history/
     	   switch(oprVersion){
@@ -1128,7 +1260,7 @@ contentLoaded.apply(null, [window, function(){
 
           if (body.className.indexOf("yes-opera") == -1){
 
-                    body.className +=" yes-opera opera presto";
+                    body.className += " yes-opera opera presto";
 
            }
 
@@ -1142,6 +1274,9 @@ contentLoaded.apply(null, [window, function(){
 
     else if(isOpera15OrLater() && (browserName == 'opr' && n.vendor === 'Google Inc.')){ 
 
+	if (isNewerBlinkChromiumBrowser) {
+			w.webpage.newer.opera = true;
+		}
     	 if (body.className.indexOf("yes-blink") == -1){
 
                     body.className += " yes-blink opera blink like-gecko like-khtml";
@@ -1190,7 +1325,7 @@ contentLoaded.apply(null, [window, function(){
 		   break;
 	   }
 	    
-	  w.webpage.device.browser_build = 'blink-opera';
+	  w.webpage.device.browser_build = 'chromium-blink-opera';
 
     }	
 	
