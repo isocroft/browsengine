@@ -1,6 +1,6 @@
 {
   "name":"browsengine",
-  "version":"0.0.9",
+  "version":"0.2.3",
   "description":"This is a small library for detecting different browser engines, their versions and the devices they run on as is used all across the web",
   "author":"Ifeora Okechukwu <https://twitter.com/isocroft>",
   "contributors":[{
@@ -12,9 +12,9 @@
   "dependencies":{},
   "browserslist":[
     ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
+    "ie <= 11",
+    "not op_mini all",
+    "not dead"
   ],
   "devDependencies":{}
 }
