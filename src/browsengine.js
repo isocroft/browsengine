@@ -1,7 +1,7 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.2.3
+ * @version: 0.2.4
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
  * @updated: 15/07/2024
@@ -160,7 +160,7 @@ contentLoaded.apply(null, [window, function(){
 
 	isSafariBrowserOnIOS = ("gesturechange" in w),
 
-     	isChromeBrowserOnAndroid = ("contacts" in n) && (typeof n.contacts.select === "function"),
+     	isChromeBrowserOnAndroid = ("contacts" in n) && (typeof n.contacts.select === "function") && !('queryLocalFonts' in w),
 
      	isSafraiBrowserOnMac = ("webkitmouseforcedown" in w),
 	    
