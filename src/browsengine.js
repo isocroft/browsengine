@@ -1,14 +1,14 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.2.4
+ * @version: 0.2.5
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 15/07/2024
+ * @updated: 15/02/2025
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
- * All Rights Reserved. Copyright (c) 2014 - 2024
+ * All Rights Reserved. Copyright (c) 2014 - 2025
  */
 
 
@@ -319,7 +319,7 @@ contentLoaded.apply(null, [window, function(){
 			  return false;
                         }());
 
-			return ((isTouchSupported && ('ontouchstart' in w))  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange')));
+			return ((isTouchSupported && ('ontouchstart' in w))  || ((n.maxTouchPoints || n.msMaxTouchPoints || 1) === 10) || (w.operamini && w.operamini.features && w.operamini.features.touch) || ('onmsgesturechange' in w && !is_own_prop(w, 'onmsgesturechange')));
 		},
 		onDesktop:function(){
 
