@@ -323,29 +323,38 @@ contentLoaded.apply(null, [window, function(){
 		},
 		onDesktop:function(){
 
-			return ((isSafraiBrowserOnMac || (~~pixelDensity) <= 1 || (~~pixelDensity) >= 2) && (w.screen.width >= 1024 && ( w.screen.width <= 1920 || !this.onTV())) && !(this.onTablet(true)));
+			return ((isSafraiBrowserOnMac || (~~pixelDensity) <= 1 || (~~pixelDensity) >= 2) && (w.screen.width >= 1024 && w.screen.width <= 1920) && !(this.onTablet(true)));
 		},
-		onTV:function(){
+		onTV:function(ignoreTouchCapableCheck){
+ 			if (!ignoreTouchCapableCheck) {
+			   if(!this.isTouchCapable()) return false;
+			}
 
-			if(!this.isTouchCapable()) return false;
-
-			return ((~~pixelDensity) == 1.5) && (w.screen.width >= 1920);
+			return ((~~pixelDensity) == 1.5) && (w.screen.width > 1920);
 		},
-		onTablet:function(){
-
-				if(!this.isTouchCapable()) return false;
+		onTablet:function(ignoreTouchCapableCheck){
+			if (!ignoreTouchCapableCheck) {
+			   if(!this.isTouchCapable()) return false;
+			}
 		
-		    	return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onMobile();
+		    	return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onTV(true) && !this.onMobile(true);
 			
 		},
-	    	onMobile:function(){
+	    	onMobile:function(ignoreTouchCapableCheck){
+			if (!ignoreTouchCapableCheck) {
+	    		    if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
+			}
 
-	    		if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
+			/* see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/capture - detect mobile support for `capture` */
+			// var testInput = document.createElement("input");
+			// var anyValues = ["user", "environment", ""];
 
-	    	
-	    		/* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
-		
-		    	return ((ua.match(/[^-]mobi|mobile/i) || isSafariBrowserOnIOS || isChromeBrowserOnAndroid) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
+			// testInput.type = "file";
+			// testInput.accpet = "image/png, image/jpg";
+			
+	 		// var isOnMobile = ('capture' in testInput) && (anyValues.includes(testInput.capture))
+	    		
+		    	return ((isSafariBrowserOnIOS || isChromeBrowserOnAndroid) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
 		
 		}
 	},
