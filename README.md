@@ -92,18 +92,18 @@ This is where a new concept comes in. I call it **Engine detection**. It's a con
 	    	alert("This is a much newer version of opera browser");
 	    }
 
-            /* Browsengine exposes an object {webpage} on the global window object */
+		/* Browsengine exposes an object {webpage} on the global window object */
 
-            console.log(document.body.className); //
-            console.log(window.webpage.device.os); // operating system for the device e.g. "Windows"
+		console.log(document.body.className); //
+		console.log(window.webpage.device.os); // operating system for the device e.g. "Windows"
 	    console.log(window.webpage.device.zoom_level); // zoom level for the device e.g. 100%
 	    console.log(window.webpage.standards); // document is rendered in standards mode e.g. true
-            console.log(window.webpage.device.touch_capable); // screen touch capability e.g. false
-            console.log(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
-            console.log(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
+		console.log(window.webpage.device.touch_capable); // screen touch capability e.g. false
+		console.log(window.webpage.device.screen.type); // screen type e.g. "retina" or "normal"
+		console.log(window.webpage.device.screen.dpi); // the pixel depth e.g. 24
 	    console.log(window.webpage.device.screen.pixel_density); // device pixel ratio e.g. 2
 	    console.log(window.webpage.device.browser_build); // the engine and browser name e.g. "chromium-blink-opera", "webkit-chrome", "chromium-edgehtml-edge"
-            console.log(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
+		console.log(window.webpage.device.type); // the device type e.g. "mobile", "tablet", "desktop" or "tv"
 
 
 	    console.log(w.webpage.device.agent.safari_mac); // the browser is safari on a mac book
@@ -112,11 +112,11 @@ This is where a new concept comes in. I call it **Engine detection**. It's a con
 	    console.log(w.webpage.device.agent.opera_mobile);
 	    console.log(w.webpage.device.agent.opera_mini);
 
-	   /* The `navigator` object now supports `navigator.oscpu` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
-           /* Unfortunately, `navigator.oscpu` has been deprecated on Firefox and will be removed from this library soon */
-	   console.log(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
+	    /* The `navigator` object now supports `navigator.oscpu` non-standard properties - polyfilled (Firefox is the only browser that support `navigator.oscpu` natively */
+	   	/* Unfortunately, `navigator.oscpu` has been deprecated on Firefox and will be removed from this library soon */
+	   	console.log(window.navigator.oscpu); // operating system cpu info e.g. "Windows NT 6.1"
 	     
-	   console.log(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
+	   	console.log(window.navigator.isSWCapable()); // determine if the browser can run a service worker natively
         </script>
      </body>
   </html>
@@ -315,3 +315,4 @@ There are a couple of websites where **Browsengine** is already being used namel
 
 - **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
 - **Synergixe, Nigeria** - [Synergixe Website](https://www.synergixe.com.ng)
+
