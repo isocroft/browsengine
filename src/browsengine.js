@@ -1,7 +1,7 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.2.5
+ * @version: 0.3.0
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
  * @updated: 14/11/2025
@@ -1358,4 +1358,5 @@ contentLoaded.apply(null, [window, function(){
  }, {}]);
  
  }(('HTMLDocument' in this) || ('Document' in this));
+
 
