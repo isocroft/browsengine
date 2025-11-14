@@ -4,7 +4,7 @@
  * @version: 0.2.5
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 15/02/2025
+ * @updated: 14/11/2025
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -566,7 +566,7 @@ contentLoaded.apply(null, [window, function(){
 		  break;
     };
 	
-	body.setAttribute("aria-last-detected", w.document.lastModified);
+	//body.setAttribute("aria-last-detected", w.document.lastModified); @INFO: Deprecated and now removed
 
 	body.setAttribute("aria-touch-capable", String(Device.isTouchCapable()));
 	
@@ -1358,3 +1358,4 @@ contentLoaded.apply(null, [window, function(){
  }, {}]);
  
  }(('HTMLDocument' in this) || ('Document' in this));
+
