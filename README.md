@@ -33,7 +33,7 @@ This is where a new concept comes in. I call it **Engine detection**. It's a con
 		  
 	<!-- Modernizr is optional -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> 
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.2.3/dist/browsengine.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/isocroft/browsengine@0.3.0/dist/browsengine.min.js"></script>
     </head>
     <body class="page"> <!-- the class attribute of the {body} tag gets filled up after page load -->
 
@@ -309,10 +309,11 @@ Available on all major browsers
 
 Please see the [CONTRIBUTING.MD](https://github.com/isocroft/browsengine/blob/master/CONTRIBUTING.MD) file for more details. Thank you.
 
-## Wesites Using This Project
+## Websites Using This Project
 
 There are a couple of websites where **Browsengine** is already being used namely:
 
 - **National Teachers Institute, Nigeria** - [NTI Portal](https://my.nti.edu.ng)
 - **Synergixe, Nigeria** - [Synergixe Website](https://www.synergixe.com.ng)
+
 
