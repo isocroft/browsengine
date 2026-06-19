@@ -4,7 +4,7 @@
  * @version: 0.3.0
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
- * @updated: 14/11/2025
+ * @updated: 19/06/2026
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
@@ -54,7 +54,7 @@ function actual_non_emulated_IE_major_version() {
 	
     // See: https://msdn.microsoft.com/library/8ka90k2e%28v=vs.94%29.aspx
 
-    var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')(); // jshint ignore:line
+    var jscriptVersion = new Function('/*@cc_on return @_jscript_version; @*/')();
     
     if (jscriptVersion === undefined) {
        jscriptVersion = 11; // IE11+ not in emulation mode
@@ -63,6 +63,12 @@ function actual_non_emulated_IE_major_version() {
     return jscriptVersion; // IE7, IE8, IE9 or IE10 in any mode, or IE11 in non-IE11 mode
 }
 
+/**
+ * Ensures a shim for the `oscpu` property on the `Navigator.prototype`
+ * or `navigator` object
+ *
+ * @returns {void}
+ */
 function polyfill_oscpu_lang(engine, av){
 	if (window.navigator.oscpu === undefined) {
 		var e_index = -1, b_index = av.indexOf(' ') + 1, splited = [""];
@@ -82,6 +88,31 @@ function polyfill_oscpu_lang(engine, av){
 	if (window.navigator.language === undefined) {  // in Opera, the language, browserLanguage and userLanguage properties are equivalent
 		window.navigator.language = window.navigator.systemLanguage || window.navigator.userLanguage || window.navigator.browserLanguage;
 	}
+}
+
+/**
+ * Detects whether the current browser natively supports the 'capture' attribute 
+ * on file inputs for native camera/microphone access.
+ *
+ * @returns {boolean} True if HTML Media Capture is supported.
+ */
+function supports_html_mediaCapture() {
+    const input = window.document.createElement('input');
+    
+    input.type = 'file';
+	input.accept = "image/*"; // = "image/png, image/jpg";
+    
+    // Perform a retention check: Verify the 'capture' property exists, 
+    // assign a standard spec value ('user' or 'environment'), and verify the browser retained it.
+    if ('capture' in input) {
+        input.capture = 'user';
+        
+        // If the browser doesn't support the attribute dynamically, or resets/ignores 
+        // the assignment, this will evaluate to false.
+        return input.capture === 'user';
+    }
+    
+    return false;
 }
 	
 
@@ -337,24 +368,19 @@ contentLoaded.apply(null, [window, function(){
 			   if(!this.isTouchCapable()) return false;
 			}
 		
-		    	return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onTV(true) && !this.onMobile(true);
+			return ((ua.match(/RIM/i)) || (ua.match(/ipad;/i)) || (ua.match(/nexus (7|10)/i)) || (ua.match(/KFAPWI/i)) || (ua.match(/tablet/i))) && !this.onTV(true) && !this.onMobile(true);
 			
 		},
-	    	onMobile:function(ignoreTouchCapableCheck){
+		onMobile:function(ignoreTouchCapableCheck){
 			if (!ignoreTouchCapableCheck) {
 	    		    if(!this.isTouchCapable()) return false; /* All smartphones/mobile-devices that can surf the net are touch-enabled */
 			}
 
-			/* see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/capture - detect mobile support for `capture` */
-			// var testInput = document.createElement("input");
-			// var anyValues = ["user", "environment", ""];
-
-			// testInput.type = "file";
-			// testInput.accpet = "image/png, image/jpg";
+			/* see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/capture - detect mobile support with `capture` attribute */
 			
-	 		// var isOnMobile = ('capture' in testInput) && (anyValues.includes(testInput.capture))
+	 		var isOnMobile = supports_html_mediaCapture();
 	    		
-		    	return ((isSafariBrowserOnIOS || isChromeBrowserOnAndroid) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
+			return isOnMobile && ((isSafariBrowserOnIOS || isChromeBrowserOnAndroid) && (w.screen.width <= 760) && (w.screen.width / pixelDensity) < 760) && (String(pixelDensity).indexOf("1.3") !== 0 && w.screen.width !== 601);
 		
 		}
 	},
@@ -642,7 +668,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	    if(!d[dd] && !isPresto){  // a necessary step to avoid conflict with old IE/Opera and others...
 
-	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && (!!w.chrome.webstore || !!w.chrome.runtime || !!w.crypto) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
+	          isChrWebkit = _engineFragment && ((d.webkitHidden === false || d.webkitHidden === undefined) && ((typeof w['chrome'] !== 'undefined') && (!!w.chrome.webstore || !!w.chrome.runtime || !!w.crypto)) && /(Chrome|Crios|Crmo|CrOS)/g.test(ua) && (n.vendor.indexOf("Google Inc.") !== -1));
 		
 		  isSafWebkit = ((n.vendor.indexOf("Apple Computer, Inc.") !== -1) && (/constructor/i.test(w.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]" }(!w.safari || (typeof w.safari !== 'undefined' && w.safari.pushNotification)))) && (typeof n.share === 'function' || !n.presentation || !n.vibrate));
 										       
@@ -723,7 +749,7 @@ contentLoaded.apply(null, [window, function(){
 	    	browserVersion = parseFloat( j[2] || "0" );  
 	
 	
-	    if(browserVersion  <= 9.0 && browserName == "msie" && isTrident){
+	    if(browserVersion <= 9.0 && browserName == "msie" && isTrident){
 	     
 	     	/* 
 	     		There are several browsers using the [Trident] engine,
@@ -749,7 +775,7 @@ contentLoaded.apply(null, [window, function(){
 		  w.webpage.newer.gecko = true;
 		}
 			
-		if(browserVersion <= 35.0 && browserName == "mozilla" && isGecko && w.Object.prtotype.watch){
+		if(browserVersion <= 35.0 && browserName == "mozilla" && isGecko && typeof w.Object.prototype.watch === 'function'){
 
 			/* 
 				There are sevral browsers using the Mozillas' Gecko engine 
@@ -775,22 +801,30 @@ contentLoaded.apply(null, [window, function(){
 
 		if(browserVersion <= 17.0 && browserName == "edge" && isEdgeHTML){
 
-			body.className += " oldEdge";
+			if (typeof w['requestFileSystem'] !== 'undefined') {
 
-		    w.webpage.old.edge = true;
+				body.className += " oldEdge";
+
+		    	w.webpage.old.edge = true;
+			} else {
+
+			   body.className += " newEdge";
+				
+	           w.webpage.newer.edge = true;
+			}
 		}
 			
 		if(browserVersion <= 40.0 && browserName == "webkit" && !isBlink){
 		     		   
 		    body.className += (isChrWebkit && !(isChromiumBlink || isNewerBlinkChromiumBrowser))? " oldChrome" : "";
 
-		    if(isSafWebkit && typeof body.requestFullscreen !== 'function'){
+		    if(isSafWebkit && (typeof body.requestFullscreen !== 'function' || typeof w['requestFileSystem'] !== 'undefined')){
 
-			body.className += " oldSafari";
+				body.className += " oldSafari";
 		    	
 		    	w.webpage.old.safari = true;
 
-		    }else if(isChrWebkit && !(isChromiumBlink || isNewerBlinkChromiumBrowser)){
+		    }else if(isChrWebkit && !(isChromiumBlink || isNewerBlinkChromiumBrowser || typeof w['requestFileSystem'] !== 'undefined')){
 
 		    	w.webpage.old.chrome = true;
 		    }
