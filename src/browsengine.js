@@ -8,7 +8,7 @@
  * @license: MIT
  * @remarks: with love for the OpenSource Community...
  *
- * All Rights Reserved. Copyright (c) 2014 - 2025
+ * All Rights Reserved. Copyright (c) 2014 - 2026
  */
 
 
