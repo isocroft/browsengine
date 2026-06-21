@@ -1,7 +1,7 @@
 /*!
  * @desc: [Engine Detection Script for Browsers on Any Device]
  * @file: [browsengine.js]
- * @version: 0.3.0
+ * @version: 0.3.1
  * @author: https://twitter.com/isocroft (@isocroft)
  * @created: 13/11/2014
  * @updated: 19/06/2026
@@ -174,7 +174,7 @@ contentLoaded.apply(null, [window, function(){
 	
 	_engineFragment = ((w.chrome || ('onafterprint' in w) || d.readyState) && ('clientInformation' in w)), z = (('orientation' in w) && !('ondeviceorientation' in w)),
 	
-	j = /(?:chrome[^ ]+:)? (edg(?:[ea]|ios)?)\/(\d+(\.\d+)?)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
+	j = /(?:chrome[^ ]+:)? (edg(?:[ea]|ios)?)\/(\d+(\.\d+)?)/.exec(nk) || /(opera|opr|opios)(?:.*version)?[ \/]([\w.]+)/.exec(nk) || /(webkit)[ \/]([\w.]+)/.exec(nk) || /; (flock)\/(\d+(\.\d+)?)/.exec(nk) || /; (vivaldi)\/(\d+(\.\d+)?)/.exec(nk) || /(?:(msie) |rv)([\w.]+)/.exec(nk) || !/compatible/.test(nk) && !/seamonkey/.test(nk) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec(nk) || [],
 	
 	osver_map = {
 		"Windows NT 5.1":"Windows XP; Intel - 32 bits",
@@ -247,7 +247,7 @@ contentLoaded.apply(null, [window, function(){
 		  	return !(OS.isWinMobile(bd)) && (this.isLinux()) && (isChromeBrowserOnAndroid || (ua.search(/\; Andriod(?:[\d]+\.[\d]+)/) > 0) && (ua.search(/like/ig) == -1));
 		  
 		},
-    		isBB:function(bd){
+		isBB:function(bd){
 		
 			// @See: http://ryanmorr.com/the-state-of-browser-detection/
 			return ('blackberry' in w) && (ua.search(/BlackBerry|\bBB\d+/) > -1);
@@ -281,7 +281,7 @@ contentLoaded.apply(null, [window, function(){
 
     /* Blink rendering engine is the new successor to Webkit for Chrome and other browsers like the newer version of Edge & Opera */
 
-     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function' || (typeof w['Credential'] === 'function')),
+     isBlink = _engineFragment && (!!w.Intl) && (!!w.CSS) && ((!!n.usb) && typeof n.usb.getDevices === 'function' || (typeof w['Credential'] === 'function' || String(w.crashReport) === '[object CrashReportContext]')),
 
     /* Blink rendering engine for specific distributions of Chromium specifically newer versions of Chrome */
 
@@ -683,56 +683,57 @@ contentLoaded.apply(null, [window, function(){
 	     }
 	
 	     w.isSafariAndiOS12OrLater = function() {
-		return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && (String(w.IntersectionObserver) === 'function IntersectionObserver() { [native code] }');
-             }
+			return isSafWebkit && (typeof n.share === 'function' && typeof w['IntersectionObserver'] === 'function') && (String(w.IntersectionObserver) === 'function IntersectionObserver() { [native code] }');
+		 }
 	     
 	     w.isOpera15OrLater = function() {
-	     	return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function'));
+	     	return (isBlink || isChrWebkit) && !isPresto && (((!!w.opr && !!w.opr.addons) || (!!w.g_opr && String(w.g_opr.scrap) === 'function () { [native code] }' && String(w.when) === 'function when() { [native code] }')) && (!!w.CSS && typeof w.CSS.supports === 'function'));
 	     }
 
-             w.isOpera33OrLater = function() {
-		return isBlink && !isPresto && ((!!w.opr && !!w.opr.addons) && (!!w.CSS && typeof w.CSS.supports === 'function')) && (String(w.caches) === '[object CacheStorage]'); 
+		 w.isOpera33OrLater = function() {
+			return (isBlink || isChrWebkit) && !isPresto && (((!!w.opr && !!w.opr.addons) || (!!w.g_opr && String(w.g_opr.scrap) === 'function () { [native code] }' && String(w.when) === 'function when() { [native code] }')) && (!!w.CSS && typeof w.CSS.supports === 'function')) && (String(w.caches) === '[object CacheStorage]'); 
   	     }
 
 	     w.isEdge17OrLater = function() {
-		return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() { [native code] }');
+			return (isEdgeChromium || isEdgeHTML) && (typeof w.PushManager === 'function') && (typeof w.when === 'undefined' || String(w.when) !== 'function when() { [native code] }') && (String(w.PushManager) === 'function PushManager() { [native code] }');
 	     }
 	
 	     w.isChrome40OrLater = function() {
-		var inp = d.createElement('input');
-   		return isChrWebkit && (isChromiumBlink || isNewerBlinkChromiumBrowser) && (typeof inp['reportValidity'] === 'function') && (String(inp['reportValidity']) === 'function reportValidity() { [native code] }');
+			var inp = d.createElement('input');
+   			return isChrWebkit && (isChromiumBlink || isNewerBlinkChromiumBrowser) && (typeof w.when === 'undefined' || String(w.when) !== 'function when() { [native code] }') && (typeof inp['reportValidity'] === 'function') && (String(inp['reportValidity']) === 'function reportValidity() { [native code] }');
  	     }
-
-             w.isFirefox19OrLater = function() {
-                return (isGecko || isNewerGeckoBrowser) && ((w.File && new w.File([], "") || {}).lastModified === (new Date).getTime())
-             }
+			 
+		 w.isFirefox19OrLater = function() {
+			return (isGecko || isNewerGeckoBrowser) && ((w.File && new w.File([], "") || {}).lastModified === (new Date).getTime())
+		 }
 
 	     w.isFirefox44OrLater = function(){
-		return (isGecko || isNewerGeckoBrowser) && typeof d.charset !== "undefined" && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
+			return (isGecko || isNewerGeckoBrowser) && typeof d.charset !== "undefined" && (typeof w.PushManager === 'function') && (String(w.PushManager) === 'function PushManager() {\n    [native code]\n}');
 	     }
 	
 	     w.isSamsungInternet4OrLater = function() {
-                var isSamsungBrowser = (ua.indexOf('SamsungBrowser') !== -1 && !isChrWebkit && !isSafWebkit && !isEdgeChromium && typeof n.setAppBadge !== 'function');
+			var isSamsungBrowser = (ua.indexOf('SamsungBrowser') !== -1 && !isChrWebkit && !isSafWebkit && !isEdgeChromium && typeof n.setAppBadge !== 'function');
 		
-		try {
-		   var dataInit = {
-		     data: "Some sample text"
-		   };
-
-		   var myPushEvent = new w.PushEvent("push", dataInit);
-
-		   return (myPushEvent.data.text() === "Some sample text") && isSamsungBrowser;   
-		} catch (errr) {
-		   /* Samsung Internet v4 specifically does not have the `data` property on `new PushEvent()` object */
-		   if (errr instanceof w.TypeError) {
-		   	return isSamsungBrowser;
-		   }
-		}
-		return false;
+			try {
+			   var dataInit = {
+			     data: "Some sample text"
+			   };
+	
+			   var myPushEvent = new w.PushEvent("push", dataInit);
+	
+			   return (myPushEvent.data.text() === "Some sample text") && isSamsungBrowser;   
+			} catch (errr) {
+			   /* @HINT: Samsung Internet v4 specifically does not have the `data` property on `new PushEvent()` object */
+			   if (errr instanceof w.TypeError) {
+			   	return isSamsungBrowser;
+			   }
+			}
+			
+			return false;
 	     }
 	     
 	     w.navigator.isSWCapable = function() {
-		return w.isSafariAndiOS12OrLater() 
+			return w.isSafariAndiOS12OrLater() 
 				|| w.isOpera33OrLater() 
 					|| w.isEdge17OrLater() 
 						|| w.isChrome40OrLater() 
@@ -773,6 +774,10 @@ contentLoaded.apply(null, [window, function(){
 
 		if (isNewerGeckoBrowser) {
 		  w.webpage.newer.gecko = true;
+		}
+
+		if (!isNewerGeckoBrowser) {
+			w.webpage.old.gecko = true;
 		}
 			
 		if(browserVersion <= 35.0 && browserName == "mozilla" && isGecko && typeof w.Object.prototype.watch === 'function'){
@@ -991,7 +996,7 @@ contentLoaded.apply(null, [window, function(){
 		     
 		     if(body.className.indexOf(ieTag.substring(1)) == -1){    
 
-                     	body.className += ieTag + " forward-ie"; 
+					body.className += ieTag + " forward-ie"; 
 		     }	
 
 		}else{
@@ -1023,7 +1028,7 @@ contentLoaded.apply(null, [window, function(){
 			
 		    w.webpage.device.browser_build = 'chromium-blink-brave';
 
-	}else if(isEdgeHTML){
+	}else if(isEdgeHTML && (typeof w.g_opr === 'undefined' || typeof w.opr === 'undefined') && (typeof w.when === 'undefined' || String(w.when) !== 'function when() { [native code] }')){
 		/* detecting Microsoft Edge */
 		
 		w.webpage.old.microsoftedge = !isNewerBlinkChromiumBrowser;
@@ -1037,7 +1042,7 @@ contentLoaded.apply(null, [window, function(){
 		    w.webpage.device.browser_build = 'edgehtml-edge';
 
 		} 
-	}else if(isEdgeChromium){
+	}else if(isEdgeChromium && (typeof w.g_opr === 'undefined' || typeof w.opr === 'undefined') && (typeof w.when === 'undefined' || String(w.when) !== 'function when() { [native code] }')){
 
 		if (isNewerBlinkChromiumBrowser) {
 	   		w.webpage.newer.microsoftedge = true;
@@ -1120,9 +1125,10 @@ contentLoaded.apply(null, [window, function(){
 
       /* Here we are detecting Chrome 1.0+, UC Browser from version 2.0+ and 5.0+ respectively */
 
-     else if (isChrWebkit && (typeof w["webkitURL"] == 'function')) {
+     else if (isChrWebkit && (typeof w["webkitURL"] == 'function') && (typeof w.g_opr === 'undefined' || typeof w.opr === 'undefined') && (typeof w.when === 'undefined' || String(w.when) !== '')) {
 	  w.webpage.old.chrome = !isNewerBlinkChromiumBrowser;
-	  body.className += w.webpage.old.chrome ? " oldChrome" : ""; 
+	  body.className += w.webpage.old.chrome ? " oldChrome" : "";
+	
 	  // See: https://en.wikipedia.org/wiki/Google_Chrome_version_history/
           switch(browserVersion){
 
@@ -1169,11 +1175,13 @@ contentLoaded.apply(null, [window, function(){
 		  case 10.0:
 			  
 		  	w.webpage.engine.version = '534.16';
-		 break;
+		  break;
 		  case 11.0:
-			  
-		  	w.webpage.engine.version = '534.24';
-                  break;
+			  w.webpage.engine.version = '534.24';
+		  break;
+		  default:
+			  w.webpage.engine.version = n.userAgentData ? n.userAgentData.brands[2]['version'] : 'x.x';
+		  break;
 	  }
 
           if(isChromiumBlink){
@@ -1212,6 +1220,7 @@ contentLoaded.apply(null, [window, function(){
 
 		if (typeof body.requestFullscreen !== 'function') {
 			body.className += " oldSafari";
+			w.webpage.old.safari = true;
 		}
   				/* Webkit Engine - browsers */
 
@@ -1265,6 +1274,12 @@ contentLoaded.apply(null, [window, function(){
 	                      body.className += " yes-webkit safari like-gecko webkit like-khtml";
 
 	              }
+
+				  if (w.isSafariAndiOS12OrLater()) {
+					  w.webpage.newer.safari = true;
+				  } else {
+					  w.webpage.old.safari = true;
+				  }
 	
 			  	  w.webpage.engine.webkit = true;
 		
@@ -1282,7 +1297,8 @@ contentLoaded.apply(null, [window, function(){
 
     else  if ((('supportsCSS' in w) || 'attachEvent' in d) && (isPresto && browserName == 'opera')){ 
 
-    	   var oprVersion = parseInt(w.opera.version());
+   		var oprVersion = parseInt(w.opera.version());
+		
 	    w.webpage.old.opera = !isNewerBlinkChromiumBrowser;
 	    body.className += w.webpage.old.opera ? " oldOpera" : "";
 
@@ -1312,11 +1328,14 @@ contentLoaded.apply(null, [window, function(){
 		   	case 14:
 			   	window.webpage.engine.version = "2.15";
 			break;
+		   	default:
+			  	window.webpage.engine.version =  "x.x";
+		   	break;
 		}	 
 
           if (body.className.indexOf("yes-opera") == -1){
 
-                    body.className += " yes-opera opera presto";
+				body.className += " yes-opera opera presto";
 
            }
 
@@ -1326,7 +1345,7 @@ contentLoaded.apply(null, [window, function(){
     }
 
     /* Here we are detecting Opera from version 15.0+ */
-    /* PS: Note that Opera 15.0 (beta) is based on Webkit but Opera 15.0+ was based on Blink after Google updated their annoucements in 2013 */
+    /* Note: Opera 15.0 (beta) is based on Webkit but Opera 16.0+ was based on Blink after Google updated their annoucements in 2013 */
 
     else if(isOpera15OrLater() && (browserName == 'opr' && n.vendor === 'Google Inc.')){ 
 
@@ -1340,8 +1359,6 @@ contentLoaded.apply(null, [window, function(){
           }
 
           w.webpage.engine.blink = true;
-
-	  w.webpage.engine.x_version = "537.36";
 	    
 	    // See: https://help.opera.com/en/opera-version-history/
 	    
@@ -1378,6 +1395,9 @@ contentLoaded.apply(null, [window, function(){
 		   break;
 		   case 25:
 			   w.webpage.engine.version = '38'
+		   break;
+		   default:
+			   w.webpage.engine.version = !!n.userAgentData ? n.userAgentData.brands[1]['version'] : "x.x";
 		   break;
 	   }
 	    
